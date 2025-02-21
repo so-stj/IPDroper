@@ -32,7 +32,7 @@ function drop_iptables(){
                 do
                     IP_LIST_1=$(echo $i | cut -d',' -f1)
                     IP_LIST_2=$(echo $i | cut -d',' -f2)
-                    IP_BLOCK=$(cider_calc $IP_LIST_1 $IP_LIST_2)
+                    IP_BLOCK=$(cider_calculate $IP_LIST_1 $IP_LIST_2)
 
                     if [ "${IP_BLOCK}" != "null" ]; then
                         iptables -A DROP-BLOCKED -s ${IP_BLOCK} -j DROP
