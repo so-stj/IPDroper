@@ -17,9 +17,11 @@ BLOCKED_COUNTRIES="CN SG ID"
 
 # Obtain and drop the IP addresses from the registry of specified countries.
 function drop_iptables(){
+
     echo "Getting the data..."
     for URL in ${APNIC_URL} ${ARIN_URL} ${AFRINIC_URL} ${RIPE_URL} ${LACNIC_URL}; do
-        if curl -s ${URL} > /tmp/delegated-latest; then
+        if curl -s ${URL} > /tmp/delegated-latest; 
+        then
             echo "Setting up iptables: ${URL}"
             iptables -D INPUT -j DROP-BLOCKED-IP > /dev/null 2>&1
             iptables -F DROP-BLOCKED-IP          > /dev/null 2>&1
@@ -49,19 +51,23 @@ function drop_iptables(){
     iptables -A DROP-BLOCKED-IP -j RETURN
     iptables -I INPUT 1 -j DROP-BLOCKED-IP
     iptables -nvxL
+    rm -rf /tmp/delegated-apnic-latest
 }
 
 # Intialize iptables list.
 function init_iptables(){
+
     iptables -D INPUT -j DROP-BLOCKED-IP
     iptables -F DROP-BLOCKED-IP
     iptables -X DROP-BLOCKED-IP
     iptables -nvxL
+    echo -e '\n==================================================\n'
     echo -e '\niptables initialised\n'
 }
 
 # CIDR calculated from the number of IP addresses.
 function cider_calculate(){
+    
     local IP_ADDRESS_NUM=4294967296
     local IP_ADDRESS=$1
     local IP_NUM=$2
@@ -77,6 +83,16 @@ function cider_calculate(){
     done
     
     echo "$IP_ADDRESS/$IP_CIDR"
+}
+
+function echo_erase(){
+
+    local STRING="$1"
+    echo -n ${STRING}
+    for i in $(seq 0 ${#STRING})
+    do
+        echo -n $'\b'
+    done
 }
 
 # Run iptables.
