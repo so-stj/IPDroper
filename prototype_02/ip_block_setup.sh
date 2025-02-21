@@ -3,7 +3,7 @@
 #---------------------------------------------------------------------------------------------------------------#
 #                     The script use for blocking an IP address.                                                #
 # List of IP address will obtain from ARIN, APNIC, RIPE NCC, AFRINIC and LACNIC.                                #
-# Which country you want to block thier IP address, add alpha-2, (ISO 3166) like CN in line 14 BLOCK_COUNTRIES. #
+# Which country you want to block thier IP address, add alpha-2, (ISO 3166) like CN in line 16 BLOCK_COUNTRIES. #
 #################################################################################################################
 
 #!/bin/sh
