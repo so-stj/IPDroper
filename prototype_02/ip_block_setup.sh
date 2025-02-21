@@ -46,6 +46,7 @@ function drop_iptables(){
             rm -rf /tmp/delegated-latest
         else
             echo "Failed obtain the data: ${URL}"
+            exit1
         fi
     done
     iptables -A DROP-BLOCKED-IP -j RETURN
