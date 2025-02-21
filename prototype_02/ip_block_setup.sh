@@ -22,12 +22,13 @@ function drop_iptables(){
     for URL in ${APNIC_URL} ${ARIN_URL} ${AFRINIC_URL} ${RIPE_URL} ${LACNIC_URL}; do
         if curl -s ${URL} > /tmp/delegated-latest; 
         then
-            echo "Setting up iptables: ${URL}"
+            echo "Setting up iptables: Will take a while"
             iptables -D INPUT -j DROP-BLOCKED-IP > /dev/null 2>&1
             iptables -F DROP-BLOCKED-IP          > /dev/null 2>&1
             iptables -X DROP-BLOCKED-IP          > /dev/null 2>&1
             iptables -N DROP-BLOCKED-IP
-            
+            COUNT=0
+
             for COUNTRY in ${BLOCKED_COUNTRIES}; do
                 echo "Processing country: ${COUNTRY}"
                 for i in $(awk -F'|' -v country="$COUNTRY" '$2==country&&$3=="ipv4"{print $4","$5}' /tmp/delegated-latest)
