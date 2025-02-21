@@ -62,7 +62,7 @@ function init_iptables(){
 }
 
 # CIDR calculated from the number of IP addresses.
-function cider_calc(){
+function cider_calculate(){
     local IP_ADDRESS_NUM=4294967296
     local IP_ADDRESS=$1
     local IP_NUM=$2
