@@ -1,11 +1,14 @@
-#########################################
-#######THIS SCRIPT USE FOR PROXMOX#######
-#########################################
-
-# With apnic and arin index need to update on every months
-# If you want to block IP addresses from ARIN, please delete # in begin line between 34 to 38
+################################################################################################
+#                                     CONDITION OF USE                                         #
+#----------------------------------------------------------------------------------------------#
+# The script use for blocking an IP address.                                                   #
+# List of IP address will obtain from ARIN, APNIC.                                             #
+# With apnic and arin index need to update on every months.                                    #
+# If you want to block IP addresses from ARIN, please delete # in begin line between 34 to 38. # 
+################################################################################################
 
 #/bin/bash
+
 # Download a latest IP address list from the FTP servers of APNIC and ARIN
 wget -O ip_apnic.txt https://ftp.apnic.net/stats/apnic/delegated-apnic-latest
 wget -O ip_arin.txt https://ftp.arin.net/pub/stats/arin/delegated-arin-extended-latest
