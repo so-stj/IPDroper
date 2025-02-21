@@ -28,7 +28,6 @@ function drop_iptables(){
             iptables -X DROP-BLOCKED-IP          > /dev/null 2>&1
             iptables -N DROP-BLOCKED-IP
             COUNT=0
-
             for COUNTRY in ${BLOCKED_COUNTRIES}; do
                 echo "Processing country: ${COUNTRY}"
                 for i in $(awk -F'|' -v country="$COUNTRY" '$2==country&&$3=="ipv4"{print $4","$5}' /tmp/delegated-latest)
