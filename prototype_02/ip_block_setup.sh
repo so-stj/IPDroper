@@ -21,10 +21,10 @@ function drop_iptables(){
     for URL in ${APNIC_URL} ${ARIN_URL} ${AFRINIC_URL} ${RIPE_URL} ${LACNIC_URL}; do
         if curl -s ${URL} > /tmp/delegated-latest; then
             echo "Setting up iptables: ${URL}"
-            iptables -D INPUT -j DROP-BLOCKED > /dev/null 2>&1
-            iptables -F DROP-BLOCKED          > /dev/null 2>&1
-            iptables -X DROP-BLOCKED          > /dev/null 2>&1
-            iptables -N DROP-BLOCKED
+            iptables -D INPUT -j DROP-BLOCKED-IP > /dev/null 2>&1
+            iptables -F DROP-BLOCKED-IP          > /dev/null 2>&1
+            iptables -X DROP-BLOCKED-IP          > /dev/null 2>&1
+            iptables -N DROP-BLOCKED-IP
             
             for COUNTRY in ${BLOCKED_COUNTRIES}; do
                 echo "Processing country: ${COUNTRY}"
@@ -35,8 +35,8 @@ function drop_iptables(){
                     IP_BLOCK=$(cider_calculate $IP_LIST_1 $IP_LIST_2)
 
                     if [ "${IP_BLOCK}" != "null" ]; then
-                        iptables -A DROP-BLOCKED -s ${IP_BLOCK} -j DROP
-                        echo "iptables -A DROP-BLOCKED -s ${IP_BLOCK} -j DROP # ${COUNTRY}"
+                        iptables -A DROP-BLOCKED-IP -s ${IP_BLOCK} -j DROP
+                        echo "iptables -A DROP-BLOCKED-IP -s ${IP_BLOCK} -j DROP # ${COUNTRY}"
                         echo "${IP_BLOCK} - ${COUNTRY}" >> /var/log/blocked_ips.log
                     fi
                 done
@@ -46,16 +46,16 @@ function drop_iptables(){
             echo "Failed obtain the data: ${URL}"
         fi
     done
-    iptables -A DROP-BLOCKED -j RETURN
-    iptables -I INPUT 1 -j DROP-BLOCKED
+    iptables -A DROP-BLOCKED-IP -j RETURN
+    iptables -I INPUT 1 -j DROP-BLOCKED-IP
     iptables -nvxL
 }
 
 # Intialize iptables lists.
 function init_iptables(){
-    iptables -D INPUT -j DROP-BLOCKED
-    iptables -F DROP-BLOCKED
-    iptables -X DROP-BLOCKED
+    iptables -D INPUT -j DROP-BLOCKED-IP
+    iptables -F DROP-BLOCKED-IP
+    iptables -X DROP-BLOCKED-IP
     iptables -nvxL
     echo -e '\niptables initialised\n'
 }
