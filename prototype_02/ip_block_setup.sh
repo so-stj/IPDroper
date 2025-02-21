@@ -15,7 +15,7 @@ RIPE_URL='https://ftp.apnic.net/stats/ripe-ncc/delegated-ripencc-latest'
 LACNIC_URL='https://ftp.lacnic.net/pub/stats/ripencc/delegated-ripencc-latest'
 BLOCKED_COUNTRIES="CN SG ID"
 
-# Obtain the IP addresses from the specified country each lists of and DROP.
+# Obtain and drop the IP addresses from the registry of specified countries.
 function drop_iptables(){
     echo "Getting the data..."
     for URL in ${APNIC_URL} ${ARIN_URL} ${AFRINIC_URL} ${RIPE_URL} ${LACNIC_URL}; do
@@ -51,7 +51,7 @@ function drop_iptables(){
     iptables -nvxL
 }
 
-# Intialize iptables lists.
+# Intialize iptables list.
 function init_iptables(){
     iptables -D INPUT -j DROP-BLOCKED-IP
     iptables -F DROP-BLOCKED-IP
