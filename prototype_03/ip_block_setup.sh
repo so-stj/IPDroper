@@ -1,6 +1,7 @@
 #!/bin/sh
 
 APNIC_URL='http://ftp.apnic.net/stats/apnic/delegated-apnic-latest'
+COUNTRY='ID'
 
 #------------------------------------------
 # APNIC から CN だけ抽出し無条件でDROP
@@ -11,25 +12,26 @@ function drop_cn_iptables(){
     if curl -s ${APNIC_URL} > /tmp/delegated-apnic-latest
     then
         echo "iptables 設定中: しばらく時間がかかります"
-        iptables -D INPUT -j DROP-CHINA > /dev/null 2>&1
-        iptables -F DROP-CHINA          > /dev/null 2>&1
-        iptables -X DROP-CHINA          > /dev/null 2>&1
-        iptables -N DROP-CHINA
+        iptables -D INPUT -j DROP-${COUNTRY} > /dev/null 2>&1
+        iptables -F DROP-${COUNTRY}          > /dev/null 2>&1
+        iptables -X DROP-${COUNTRY}          > /dev/null 2>&1
+        iptables -N DROP-${COUNTRY}
         COUNT=0
-        for i in $(awk -F'|' '$2~/CN/&&$3~/ipv4/{print $4","$5}' /tmp/delegated-apnic-latest)
+        for i in $(awk -F'|' '$2~/'${COUNTRY}'/&&$3~/ipv4/{print $4","$5}' /tmp/delegated-apnic-latest)
         do
             IP_LIST_1=$(echo $i | cut -d',' -f1)
             IP_LIST_2=$(echo $i | cut -d',' -f2)
-            IP_CN_LIST=$(cider_calc $IP_LIST_1 $IP_LIST_2)
+            IP_CO_LIST=$(cider_calc $IP_LIST_1 $IP_LIST_2)
 
-            if [ ${IP_CN_LIST} != 'null' ];then
-                iptables -A DROP-CHINA -s ${IP_CN_LIST} -j DROP
-                echo_erase "iptables -A DROP-CHINA -s ${IP_CN_LIST} -j DROP"
+            if [ ${IP_CO_LIST} != 'null' ];then
+                iptables -A DROP-${COUNTRY} -s ${IP_CO_LIST} -j DROP
+                echo_erase "iptables -A DROP-${COUNTRY} -s ${IP_CO_LIST} -j DROP"
+                echo "${IP_CO_LIST} - ${COUNTRY}" >> /var/log/blocked_ips.log
             fi
 
         done
-        iptables -A DROP-CHINA -j RETURN
-        iptables -I INPUT 1    -j DROP-CHINA
+        iptables -A DROP-${COUNTRY} -j RETURN
+        iptables -I INPUT 1    -j DROP-${COUNTRY}
         iptables -nvxL
         rm -rf /tmp/delegated-apnic-latest
     else
@@ -43,9 +45,9 @@ function drop_cn_iptables(){
 #------------------------------------------
 function init_cn_iptables(){
 
-    iptables -D INPUT -j DROP-CHINA
-    iptables -F DROP-CHINA
-    iptables -X DROP-CHINA
+    iptables -D INPUT -j DROP-${COUNTRY}
+    iptables -F DROP-${COUNTRY}
+    iptables -X DROP-${COUNTRY}
     iptables -nvxL
     echo -e '\n==================================================\n'
     echo -e '\n120秒間反応がなかったためiptables を初期化しました\n'

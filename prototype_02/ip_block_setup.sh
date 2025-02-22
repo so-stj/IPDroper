@@ -1,9 +1,9 @@
 #################################################################################################################
 #                                CONDITION OF USE                                                               #
 #---------------------------------------------------------------------------------------------------------------#
-# The script use for blocking an IP address.                                                                    #
+#                     The script use for blocking an IP address.                                                #
 # List of IP address will obtain from ARIN, APNIC, RIPE NCC, AFRINIC and LACNIC.                                #
-# Which country you want to block thier IP address, add alpha-2, (ISO 3166) like CN in line 16 BLOCK_COUNTRIES. #
+# Which country you want to block thier IP address, add alpha-2, (ISO 3166) like CN in line 14 BLOCK_COUNTRIES. #
 #################################################################################################################
 
 #!/bin/sh
@@ -15,19 +15,19 @@ RIPE_URL='https://ftp.apnic.net/stats/ripe-ncc/delegated-ripencc-latest'
 LACNIC_URL='https://ftp.lacnic.net/pub/stats/ripencc/delegated-ripencc-latest'
 BLOCKED_COUNTRIES="CN SG ID"
 
-# Obtain and drop the IP addresses from the registry of specified countries.
+# Obtain the IP addresses from the specified country each lists of and DROP.
 function drop_iptables(){
 
     echo "Getting the data..."
     for URL in ${APNIC_URL} ${ARIN_URL} ${AFRINIC_URL} ${RIPE_URL} ${LACNIC_URL}; do
         if curl -s ${URL} > /tmp/delegated-latest; 
         then
-            echo "Setting up iptables: Will take a while"
+            echo "Setting up iptables: ${URL}"
             iptables -D INPUT -j DROP-BLOCKED-IP > /dev/null 2>&1
             iptables -F DROP-BLOCKED-IP          > /dev/null 2>&1
             iptables -X DROP-BLOCKED-IP          > /dev/null 2>&1
             iptables -N DROP-BLOCKED-IP
-            COUNT=0
+            
             for COUNTRY in ${BLOCKED_COUNTRIES}; do
                 echo "Processing country: ${COUNTRY}"
                 for i in $(awk -F'|' -v country="$COUNTRY" '$2==country&&$3=="ipv4"{print $4","$5}' /tmp/delegated-latest)
@@ -46,7 +46,6 @@ function drop_iptables(){
             rm -rf /tmp/delegated-latest
         else
             echo "Failed obtain the data: ${URL}"
-            exit1
         fi
     done
     iptables -A DROP-BLOCKED-IP -j RETURN
@@ -55,7 +54,7 @@ function drop_iptables(){
     rm -rf /tmp/delegated-apnic-latest
 }
 
-# Intialize iptables list.
+# Intialize iptables lists.
 function init_iptables(){
 
     iptables -D INPUT -j DROP-BLOCKED-IP
