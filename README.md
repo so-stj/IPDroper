@@ -8,3 +8,5 @@
 
 # Description
 The script use for block ip address from registry of each IP address administrative organizations.
+
+# How To use
