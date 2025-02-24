@@ -5,7 +5,7 @@ declare -a script_list=("iptablesConfigration.sh" "iptablesRemove.sh" "iptablesL
 declare -a script_descriptions=("iptables 設定を追加するスクリプト" "iptables 設定を削除するスクリプト" "現在の iptables 設定を表示")
 
 # スクリプトが格納されているディレクトリ
-script_dir="."
+script_dir="./scripts"
 
 # スクリプトが格納されているディレクトリが存在するか確認
 if [ ! -d "$script_dir" ]; then
