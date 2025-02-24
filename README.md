@@ -16,4 +16,5 @@
 5. [Troubleshooting](#Troubleshooting)
 
 # Description
-The script use for block ip address from registry of each IP address administrative organizations.
+
+This script allows users to easily manage block ip address in iptables on Linux system. 
