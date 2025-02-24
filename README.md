@@ -1,4 +1,5 @@
-# IptablesConfigManager
+# IPDroper
+
 <div id="top"></div>
 <p style="display: inline">
   <!-- List of technologies used --> 
