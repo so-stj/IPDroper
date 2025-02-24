@@ -72,7 +72,7 @@ function init_country_iptables(){
 #------------------------------------------
 # 保有IP数よりCIDERを算出
 #------------------------------------------
-function cider_calculator){
+function cider_calculator(){
 
     local IP_ADDRESS_NUM=4294967296
     local IP_ADDRESS=$1
