@@ -17,4 +17,4 @@
 
 # Description
 
-This script allows users to easily manage block ip address in iptables on Linux system. 
+This IPDroper of bash script allows users to easily block ip address in iptables on Linux system. 
