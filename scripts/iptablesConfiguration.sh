@@ -15,7 +15,7 @@ case $ORG_CHOICE in
     1)  URL='http://ftp.apnic.net/stats/apnic/delegated-apnic-latest' ;;
     2)  URL='https://ftp.ripe.net/ripe/stats/delegated-ripencc-latest' ;;
     3)  URL='https://ftp.arin.net/pub/stats/arin/delegated-arin-extended-latest' ;;
-    4)  URL='https://ftp.lacnic.net/pub/stats/ripencc/delegated-ripencc-latest'
+    4)  URL='https://ftp.lacnic.net/pub/stats/ripencc/delegated-ripencc-latest' ;;
     *)  echo "無効な選択です"; exit 1 ;;
 esac
 
