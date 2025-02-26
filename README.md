@@ -10,10 +10,9 @@
 ## Table of Contents
 
 1. [Description](#Description)
-2. [Enviorment](#Enviorment)
+2. [Usage](#Usage)
 3. [Directory structure](#Directorystructure)
-4. [Development environment setup](https://github.com/SO114514/opentf-proxmox/blob/main/README.md#devopment-enviorment-setup)
-5. [Troubleshooting](#Troubleshooting)
+4. [Troubleshooting](#Troubleshooting)
 
 # Description
 
