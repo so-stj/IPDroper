@@ -14,9 +14,9 @@ read COUNTRY
 # Configure URL of Number Resource Organization
 case $ORG_CHOICE in
     1)  URL='https://ftp.apnic.net/stats/apnic/delegated-apnic-latest' ;;
-    2)  URL='https://ftp.ripe.net/ripe/stats/delegated-ripencc-latest' ;;
+    2)  URL='https://ftp.ripe.net/pub/stats/ripencc/delegated-ripencc-latest.txt' ;;
     3)  URL='https://ftp.arin.net/pub/stats/arin/delegated-arin-extended-latest' ;;
-    4)  URL='https://ftp.lacnic.net/pub/stats/ripencc/delegated-ripencc-latest' ;;
+    4)  URL='https://ftp.lacnic.net/pub/stats/lacnic/delegated-lacnic-extended-latest' ;;
     5)  URL='https://ftp.afrinic.net/pub/stats/afrinic/delegated-afrinic-latest' ;;
     *)  echo "invalid selector"; exit 1 ;;
 esac
