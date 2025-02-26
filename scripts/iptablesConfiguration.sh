@@ -1,13 +1,13 @@
 #!/bin/sh
 
 # User allows to select Number Resource Organization
-echo "Please select the Number Resource Organization:"
+echo "Please select Number Resource Organization :"
 echo "1) APNIC"
 echo "2) RIPE"
 echo "3) ARIN"
 echo "4) LACNIC"
-read -p "Please enter the number (1-4): " ORG_CHOICE
-echo "Please enter the Alpha-2 code (Examples: ID, JP):"
+read -p "Please enter number (1-4): " ORG_CHOICE
+echo "Please enter country alpha-2 code (Examples: ID, JP):"
 read COUNTRY
 
 # Configure URL of Number Resource Organization
@@ -103,7 +103,7 @@ function echo_erase(){
 # Run iptables and iptables going to initialize if no response on while 120 secounds after completed settings
 drop_country_iptables
 echo -e '\n==================================================\n'
-echo -e "### Settings of iptables is complete ###\n"
-echo -e 'If Iptables hasn't any problem on currently of settings, please press Ctrl + C and save iptables\n'
+echo -e "### iptables configuration is complete ###\n"
+echo -e 'If there are no problems with the current iptables settings, press Ctrl + C to save iptables.\n'
 sleep 120
 init_country_iptables
