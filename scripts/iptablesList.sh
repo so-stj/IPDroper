@@ -1,5 +1,5 @@
 #!/bin/bash
 
-# iptablesの設定を表示する
-echo "現在の iptables 設定を表示します..."
+# Show iptables of settings with options -L -v -n
+echo "Show the current iptables settings..."
 sudo iptables -L -v -n
