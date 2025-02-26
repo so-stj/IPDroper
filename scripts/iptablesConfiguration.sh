@@ -1,33 +1,31 @@
 #!/bin/sh
 
-# 管理組織のURLと国コードを入力できるように変更
-echo "使用する管理組織を選択してください:"
+# User allows to select Number Resource Organization
+echo "Please select the Number Resource Organization:"
 echo "1) APNIC"
 echo "2) RIPE"
 echo "3) ARIN"
 echo "4) LACNIC"
-read -p "番号を入力してください (1-3): " ORG_CHOICE
-echo "国コードを入力してください (例: ID, JP):"
+read -p "Please enter the number (1-4): " ORG_CHOICE
+echo "Please enter the Alpha-2 code (Examples: ID, JP):"
 read COUNTRY
 
-# 各管理組織のURLを設定
+# Configure URL of Number Resource Organization
 case $ORG_CHOICE in
     1)  URL='http://ftp.apnic.net/stats/apnic/delegated-apnic-latest' ;;
     2)  URL='https://ftp.ripe.net/ripe/stats/delegated-ripencc-latest' ;;
     3)  URL='https://ftp.arin.net/pub/stats/arin/delegated-arin-extended-latest' ;;
     4)  URL='https://ftp.lacnic.net/pub/stats/ripencc/delegated-ripencc-latest' ;;
-    *)  echo "無効な選択です"; exit 1 ;;
+    *)  echo "invalid selector"; exit 1 ;;
 esac
 
-#------------------------------------------
-# APNIC から指定された国を抽出し無条件でDROP
-#------------------------------------------
+# Iptables will drop by identified the Alpa-2 code on registry that obtaine from Number Resource Organization (APNIC, RIPE-NCC, ARIN, LACNIC)
 function drop_country_iptables(){
 
-    echo "データー取得中: ${URL}"
+    echo "Getting the data: ${URL}"
     if curl -s ${URL} > /tmp/delegated-latest
     then
-        echo "iptables 設定中: しばらく時間がかかります"
+        echo "Settings of iptables in progress: it will take a while"
         iptables -D INPUT -j DROP-${COUNTRY} > /dev/null 2>&1
         iptables -F DROP-${COUNTRY}          > /dev/null 2>&1
         iptables -X DROP-${COUNTRY}          > /dev/null 2>&1
@@ -51,14 +49,12 @@ function drop_country_iptables(){
         iptables -nvxL
         rm -rf /tmp/delegated-latest
     else
-        echo "データー取得失敗:${URL}"
+        echo "Failed to get data:${URL}"
         exit 1
     fi
 }
 
-#------------------------------------------
-# iptables の初期化
-#------------------------------------------
+# Initialize iptables
 function init_country_iptables(){
 
     iptables -D INPUT -j DROP-${COUNTRY}
@@ -66,13 +62,11 @@ function init_country_iptables(){
     iptables -X DROP-${COUNTRY}
     iptables -nvxL
     echo -e '\n==================================================\n'
-    echo -e '\n120秒間反応がなかったためiptables を初期化しました\n'
+    echo -e '\n Iptables has been initialized, becuase there was no response for 120 seconds \n'
 }
 
-#------------------------------------------
-# 保有IP数よりCIDERを算出
-#------------------------------------------
-function cider_calculator){
+# Calculate CIDR of IP address that holding
+function cider_calculator(){
 
     local IP_ADDRESS_NUM=4294967296
     local IP_ADDRESS=$1
@@ -95,9 +89,7 @@ function cider_calculator){
     fi
 }
 
-#------------------------------------------
-# 標準出力を制御する関数
-#------------------------------------------
+# Function that control of stnadard output
 function echo_erase(){
 
     local STRING="$1"
@@ -108,12 +100,10 @@ function echo_erase(){
     done
 }
 
-#------------------------------------------
-# iptables の 実行
-#------------------------------------------
+# Run iptables and iptables going to initialize if no response on while 120 secounds after completed settings
 drop_country_iptables
 echo -e '\n==================================================\n'
-echo -e "### 設定完了 ###\n"
-echo -e '現在の設定で問題がなければ120秒以内に「 Ctrl + c 」で抜けてセーブして下さい。\n'
+echo -e "### Settings of iptables is complete ###\n"
+echo -e 'If Iptables hasn't any problem on currently of settings, please press Ctrl + C and save iptables\n'
 sleep 120
 init_country_iptables

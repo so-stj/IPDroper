@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Function to validate if the country code is a valid alpha-2 code
+# Function to validate that if the country code is a valid alpha-2 code
 validate_country_code() {
   local valid_codes=("AD" "AE" "AF" "AG" "AI" "AL" "AM" "AO" "AR" "AS" "AT" "AU" "AW" "AX" "AZ"
                      "BA" "BB" "BD" "BE" "BF" "BG" "BH" "BI" "BJ" "BL" "BM" "BN" "BO" "BQ" "BR"
@@ -21,36 +21,36 @@ validate_country_code() {
                      "YT" "ZA" "ZM" "ZW")
   
   if [[ ! " ${valid_codes[@]} " =~ " ${COUNTRY} " ]]; then
-    echo "無効な国コードです。再度入力してください。"
+    echo "This code is invalid, please enter once again."
     exit 1
   fi
 }
 
-echo "国コードを入力してください (例: ID, JP):"
+echo "Please enter the alpha-2 code (Examples: ID, CN, TH):"
 read COUNTRY
 
 validate_country_code
 
-# チェインが存在するか確認
+# Check if a chein exists on iptables
 if iptables -nL | grep -q "DROP-${COUNTRY}"; then
-  echo "Iptables chain deletion has started..."
+  echo "Chein deletion has been started..."
   
-  # INPUT チェインにルールがある場合のみ削除
+  # Delete if exists rules on INPUT chain
   if iptables -C INPUT -j DROP-${COUNTRY} 2>/dev/null; then
     iptables -D INPUT -j DROP-${COUNTRY}
   fi
 
-  # DROP-${COUNTRY} チェインが存在する場合のみ削除
+  # Delete if exists rules on DROP-${COUNTRY} chein
   if iptables -nL DROP-${COUNTRY} &>/dev/null; then
     iptables -F DROP-${COUNTRY}
     iptables -X DROP-${COUNTRY}
   fi
 
-  echo "iptables chain deletion complete."
+  echo "Chein has been deleted."
 else
-  echo "DROP-${COUNTRY} チェインは存在しません。"
+  echo "DROP-${COUNTRY} chein not exists."
 fi
 
 
-# 現在の iptables ルールを表示
+# Show current iptables rules
 iptables -nvxL

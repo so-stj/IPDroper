@@ -1,19 +1,19 @@
 #!/bin/bash
 
-# メニュー項目とその説明 114514
+# Menu tables and description
 declare -a script_list=("iptablesConfigration.sh" "iptablesRemove.sh" "iptablesList.sh")
 declare -a script_descriptions=("iptables 設定を追加するスクリプト" "iptables 設定を削除するスクリプト" "現在の iptables 設定を表示")
 
-# スクリプトが格納されているディレクトリ
+# Scripts that stored in directory
 script_dir="./scripts"
 
-# スクリプトが格納されているディレクトリが存在するか確認
+# Validate the scripts that stored in directory
 if [ ! -d "$script_dir" ]; then
     echo "指定したディレクトリが存在しません: $script_dir"
     exit 1
 fi
 
-# メニュー表示
+# Show menu
 echo "実行したいスクリプトを選んでください:"
 index=1
 for script in "${script_list[@]}"; do
@@ -22,15 +22,15 @@ for script in "${script_list[@]}"; do
     index=$((index + 1))
 done
 
-# ユーザーに選択させる
+# Allow user to select menu
 PS3="選択してください (番号を入力): "
 select selected in "${script_list[@]}"; do
     if [ -z "$selected" ]; then
         echo "無効な選択です。"
     else
-        # 選ばれたスクリプトのファイルパスを取得
+        # Get the file pass that selected scripts
         if [[ "$selected" == "view_iptables.sh" ]]; then
-            # iptables の現在のルールを表示する
+            # Show currently settings of iptables
             echo "現在の iptables 設定を表示します..."
             sudo iptables -L
             break
@@ -38,22 +38,22 @@ select selected in "${script_list[@]}"; do
 
         script_file="$script_dir/$selected"
         
-        # スクリプトが存在するか確認
+        # Check the script that existing or not
         if [ ! -f "$script_file" ]; then
             echo "指定したスクリプトが見つかりません: $script_file"
             break
         fi
         
-        # スクリプトの説明を表示
+        # Show description thier scripts
         selected_index=$(echo "${script_list[@]}" | tr ' ' '\n' | grep -n "$selected" | cut -d ':' -f 1)
         echo "選択したスクリプト: $selected"
         echo "説明: ${script_descriptions[$((selected_index-1))]}"
         echo "このスクリプトを実行しますか？ (y/n)"
         
-        # ユーザーに確認を求める
+        # Require to user
         read confirm
         if [[ "$confirm" == "y" || "$confirm" == "Y" ]]; then
-            # スクリプト実行
+            # Run script
             bash "$script_file"
             echo "$selected が実行されました。"
         else
