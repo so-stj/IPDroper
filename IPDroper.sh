@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Menu tables and description
-declare -a script_list=("iptablesConfigration.sh" "iptablesRemove.sh" "iptablesList.sh")
+declare -a script_list=("iptablesConfiguration.sh" "iptablesRemove.sh" "iptablesList.sh")
 declare -a script_descriptions=("Add drop script" "Delete drop chein script" " Show current iptables script")
 
 # Scripts that stored in directory
