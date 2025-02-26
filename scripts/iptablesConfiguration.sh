@@ -40,7 +40,7 @@ function drop_country_iptables(){
             if [ ${IP_CO_LIST} != 'null' ];then
                 iptables -A DROP-${COUNTRY} -s ${IP_CO_LIST} -j DROP
                 echo_erase "iptables -A DROP-${COUNTRY} -s ${IP_CO_LIST} -j DROP"
-                echo "${IP_CO_LIST} - ${COUNTRY}" >> /var/log/blocked_ips.log
+                #echo "${IP_CO_LIST} - ${COUNTRY}" >> /var/log/blocked_ips.log
             fi
 
         done
