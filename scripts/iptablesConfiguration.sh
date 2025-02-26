@@ -3,19 +3,21 @@
 # User allows to select Number Resource Organization
 echo "Please select Number Resource Organization :"
 echo "1) APNIC"
-echo "2) RIPE"
+echo "2) RIPE-NCC"
 echo "3) ARIN"
 echo "4) LACNIC"
-read -p "Please enter number (1-4): " ORG_CHOICE
+echo "5) AFRINIC"
+read -p "Please enter number (1-5): " ORG_CHOICE
 echo "Please enter country alpha-2 code (Examples: ID, JP):"
 read COUNTRY
 
 # Configure URL of Number Resource Organization
 case $ORG_CHOICE in
-    1)  URL='http://ftp.apnic.net/stats/apnic/delegated-apnic-latest' ;;
+    1)  URL='https://ftp.apnic.net/stats/apnic/delegated-apnic-latest' ;;
     2)  URL='https://ftp.ripe.net/ripe/stats/delegated-ripencc-latest' ;;
     3)  URL='https://ftp.arin.net/pub/stats/arin/delegated-arin-extended-latest' ;;
     4)  URL='https://ftp.lacnic.net/pub/stats/ripencc/delegated-ripencc-latest' ;;
+    5)  URL='https://ftp.afrinic.net/pub/stats/afrinic/delegated-afrinic-latest' ;;
     *)  echo "invalid selector"; exit 1 ;;
 esac
 
