@@ -19,4 +19,5 @@ This bash script allows users to easily block ip address in iptables on Linux sy
 
 # Usage
 
-Run the script then display menu there are allow select scripts those are add the country by alpha2 code to block IP address that specified from registry of the Number Resource Organization.  
+Run the script then display menu there are allow select scripts.
+1. iptablesConfiguration.sh allow to add the country by alpha2 code to block IP address that specified from registry of the Number Resource Organization.  
