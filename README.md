@@ -11,9 +11,12 @@
 
 1. [Description](#Description)
 2. [Usage](#Usage)
-3. [Directory structure](#Directorystructure)
-4. [Troubleshooting](#Troubleshooting)
+3. [Troubleshooting](#Troubleshooting)
 
 # Description
 
 This bash script allows users to easily block ip address in iptables on Linux system. 
+
+# Usage
+
+Run the script then display menu there are allow select scripts those are add the country by alpha2 code to block IP address that specified from registry of the Number Resource Organization.  
