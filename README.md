@@ -25,7 +25,12 @@ Run the script then display menu there are allow select scripts:
 These NROs are available:
 
 APNIC - Asia-Pacific Network Information Centre
+
 RIPE-NCC - Réseaux IP Européens Network Coordination Centre
+
 ARIN - American Registry for Internet Numbers
+
 LACNIC - Latin American and Caribbean Internet Address Registry
+
 AFNIC - Association française pour le nommage Internet en coopération
+
