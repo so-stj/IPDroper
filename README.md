@@ -35,7 +35,7 @@ Run the script then display menu there are allow select scripts.
 
  5) AFNIC - Association française pour le nommage Internet en coopération
 
- User allow to select one that numbers between 1-5 of NRO.
- After that enter the country alpha2 code to block and begin the process of configuration on iptables.
+  User allow to select one that numbers between 1-5 of NRO.
+  After that enter the country alpha2 code to block and begin the process of configuration on iptables.
 
 
