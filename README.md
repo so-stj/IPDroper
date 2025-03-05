@@ -5,8 +5,6 @@
   <!-- List of technologies used --> 
   List of technologies used:
   
-
-
 <img src="https://img.shields.io/badge/Linux--FFA500.svg?logo=Linux&style=plastic">
 
 ## Table of Contents
@@ -37,7 +35,7 @@ IptablesConfiguration.sh allow to block IP address of country that specified fro
 
  5) AFNIC - Association française pour le nommage Internet en coopération
 
- User allow to select numbers between 1-5.
+ User allow to select one that numbers between 1-5 of NRO.
  After that enter the country alpha2 code to block and begin the process of configuration on iptables.
 
 
