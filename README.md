@@ -22,19 +22,19 @@ This bash script allows users to easily block ip address in iptables on Linux sy
 Run the script then display menu there are allow select scripts:
 1. iptablesConfiguration.sh allow to block IP address that specified from registry of the Number Resource Organization.  
 
-These NROs are available:
+ These NROs are available:
 
-1) APNIC - Asia-Pacific Network Information Centre
+ 1) APNIC - Asia-Pacific Network Information Centre
 
-2) RIPE-NCC - Réseaux IP Européens Network Coordination Centre
+ 2) RIPE-NCC - Réseaux IP Européens Network Coordination Centre
 
-3) ARIN - American Registry for Internet Numbers
+ 3) ARIN - American Registry for Internet Numbers
 
-4) LACNIC - Latin American and Caribbean Internet Address Registry
+ 4) LACNIC - Latin American and Caribbean Internet Address Registry
 
-5) AFNIC - Association française pour le nommage Internet en coopération
+ 5) AFNIC - Association française pour le nommage Internet en coopération
 
-User allow to select numbers between 1-5.
-After that enter the country alpha2 code to block and begin the process of configuration on iptables.
+ User allow to select numbers between 1-5.
+ After that enter the country alpha2 code to block and begin the process of configuration on iptables.
 
 
