@@ -22,7 +22,7 @@ This bash script allows users to easily block ip address in iptables on Linux sy
 Run the script then display menu there are allow select scripts.
 
 1. IptablesConfiguration.sh allow to block IP address of country that specified from registry of the Number Resource Organization.
-2. 
+
 These NROs are available:
 
  1) APNIC - Asia-Pacific Network Information Centre
