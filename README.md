@@ -22,10 +22,10 @@ This bash script allows users to easily block ip address in iptables on Linux sy
 Run the script then display menu there are allow select scripts:
 1. iptablesConfiguration.sh allow to add the country by alpha2 code to block IP address that specified from registry of the Number Resource Organization.  
 
-Those NROs are available:
+These NROs are available:
 
-APNIC
-RIPE-NCC
-ARIN
-LACNIC
-AFNIC
+APNIC - Asia-Pacific Network Information Centre
+RIPE-NCC - Réseaux IP Européens Network Coordination Centre
+ARIN - American Registry for Internet Numbers
+LACNIC - Latin American and Caribbean Internet Address Registry
+AFNIC - Association française pour le nommage Internet en coopération
