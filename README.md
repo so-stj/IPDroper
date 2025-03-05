@@ -20,7 +20,7 @@ This bash script allows users to easily block ip address in iptables on Linux sy
 # Usage
 
 Run the script then display menu there are allow select scripts.
-```ruby
+
 1. IptablesConfiguration.sh allow to block IP address of country that specified from registry of the Number Resource Organization.
 
 These NROs are available:
@@ -38,6 +38,5 @@ These NROs are available:
 User allow to select one that numbers between 1-5 of NRO.   
 After that enter the country alpha2 code to block and begin the process of configuration on iptables.
 When finished the configuration on iptables you need to save manually that configration because script will not iptables-save.
-```
 
 IPtablesRemove.sh allow to delete
