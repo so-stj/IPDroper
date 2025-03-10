@@ -39,4 +39,4 @@ User allow to select one that numbers between 1-5 of NRO.
 After that enter the country alpha2 code to block and begin the process of configuration on iptables.
 When finished the configuration on iptables you need to save manually that configration because script will not iptables-save.
 
-IPtablesRemove.sh allow to delete
+IPtablesRemove.sh allow to delete the specified chain on iptables
