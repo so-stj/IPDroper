@@ -6,6 +6,10 @@
 
 A powerful bash-based tool for managing iptables rules to block IP addresses by country using Regional Internet Registry (RIR) data. IPDroper allows you to easily block entire countries' IP ranges from accessing your Linux system.
 
+## Language
+
+For Japnese README is [here](https://github.com/so-stj/IPDroper/blob/main/README_JPmd)
+
 ## 📋 Table of Contents
 
 - [Description](#description)
