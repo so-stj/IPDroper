@@ -12,7 +12,7 @@ For Japanese README is [here](https://github.com/so-stj/IPDroper/blob/main/READM
 
 ## 📋 Table of Contents
 
-- [Description](#description(https://github.com/so-stj/IPDroper?tab=readme-ov-file#-description))
+- [Description](#description (https://github.com/so-stj/IPDroper?tab=readme-ov-file#-description))
 - [Features](#features)
 - [Prerequisites](#prerequisites)
 - [Installation](#installation)
