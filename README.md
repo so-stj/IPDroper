@@ -8,7 +8,7 @@ A powerful bash-based tool for managing iptables rules to block IP addresses by 
 
 ## Language
 
-For Japnese README is [here](https://github.com/so-stj/IPDroper/blob/main/README_JPmd)
+For Japanese README is [here](https://github.com/so-stj/IPDroper/blob/main/README_JPmd)
 
 ## 📋 Table of Contents
 
