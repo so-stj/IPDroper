@@ -199,5 +199,5 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 **⚠️ Warning:** This tool modifies iptables rules and can affect network connectivity. Always test in a safe environment first and ensure you have proper backups of your iptables configuration.
 
-**📝 Note:** IPDroper is designed for educational and security purposes. Please ensure compliance with local laws and regulations when using this tool.
+**📝 Note:** IPDroper is designed for educational and security purposes. Please ensure compliance when using this tool.
 
