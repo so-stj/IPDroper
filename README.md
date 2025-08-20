@@ -12,12 +12,12 @@ For Japanese README is [here](https://github.com/so-stj/IPDroper/blob/main/READM
 
 ## 📋 Table of Contents
 
-- [Description](#description)
-- [Features](#features)
-- [Prerequisites](#prerequisites)
-- [Installation](#installation)
-- [Usage](#usage)
-- [Scripts Overview](#scripts-overview)
+- [Description](##description)
+- [Features](##features)
+- [Prerequisites](##prerequisites)
+- [Installation](##installation)
+- [Usage](##usage)
+- [Scripts Overview](##scripts-overview)
 - [Directory Structure](#directory-structure)
 - [Troubleshooting](#troubleshooting)
 - [Contributing](#contributing)
