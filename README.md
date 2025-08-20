@@ -13,15 +13,15 @@ For Japanese README is [here](https://github.com/so-stj/IPDroper/blob/main/READM
 ## 📋 Table of Contents
 
 - [Description](https://github.com/so-stj/IPDroper?tab=readme-ov-file#-description)
-- [Features](#features)
-- [Prerequisites](#prerequisites)
-- [Installation](#installation)
-- [Usage](#usage)
-- [Scripts Overview](#scripts-overview)
-- [Directory Structure](#directory-structure)
-- [Troubleshooting](#troubleshooting)
-- [Contributing](#contributing)
-- [License](#license)
+- [Features](https://github.com/so-stj/IPDroper?tab=readme-ov-file#-features)
+- [Prerequisites](https://github.com/so-stj/IPDroper?tab=readme-ov-file#-prerequisites)
+- [Installation](https://github.com/so-stj/IPDroper?tab=readme-ov-file#-installation)
+- [Usage](https://github.com/so-stj/IPDroper?tab=readme-ov-file#-usage)
+- [Scripts Overview](https://github.com/so-stj/IPDroper?tab=readme-ov-file#-scripts-overview)
+- [Directory Structure](https://github.com/so-stj/IPDroper?tab=readme-ov-file#-directory-structure)
+- [Troubleshooting](https://github.com/so-stj/IPDroper?tab=readme-ov-file#-troubleshooting)
+- [Contributing](https://github.com/so-stj/IPDroper?tab=readme-ov-file#-contributing)
+- [License](https://github.com/so-stj/IPDroper?tab=readme-ov-file#-license)
 
 ## 📖 Description
 
