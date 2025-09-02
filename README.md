@@ -10,7 +10,7 @@ A powerful bash-based tool for managing iptables rules to block IP addresses by 
 
 For Japanese README is [here](https://github.com/so-stj/IPDroper/blob/main/README_JP.md)
 
-## 📋 Table of Contents
+## Table of Contents
 
 - [Description](https://github.com/so-stj/IPDroper?tab=readme-ov-file#-description)
 - [Features](https://github.com/so-stj/IPDroper?tab=readme-ov-file#-features)
@@ -23,7 +23,7 @@ For Japanese README is [here](https://github.com/so-stj/IPDroper/blob/main/READM
 - [Contributing](https://github.com/so-stj/IPDroper?tab=readme-ov-file#-contributing)
 - [License](https://github.com/so-stj/IPDroper?tab=readme-ov-file#-license)
 
-## 📖 Description
+## Description
 
 IPDroper is a comprehensive bash script suite that simplifies the process of blocking IP addresses by country using iptables on Linux systems. It leverages data from Regional Internet Registries (RIRs) to automatically generate and manage iptables rules for blocking entire country IP ranges.
 
@@ -34,17 +34,17 @@ The tool supports all major RIRs:
 - **LACNIC** (Latin America and Caribbean Network Information Centre)
 - **AFRINIC** (African Network Information Centre)
 
-## ✨ Features
+## Features
 
-- 🔒 **Country-based IP blocking** - Block entire countries using ISO 3166-1 alpha-2 country codes
-- 🌍 **Multi-RIR support** - Works with all major Regional Internet Registries
-- 🛠️ **Easy management** - Simple menu-driven interface for all operations
-- 📊 **Real-time monitoring** - View current iptables rules and statistics
-- 🔄 **Flexible removal** - Easily remove country blocks when no longer needed
-- ⚡ **Automatic CIDR calculation** - Converts IP ranges to CIDR notation automatically
-- 🛡️ **Validation** - Validates country codes and ensures proper iptables chain management
+-  **Country-based IP blocking** - Block entire countries using ISO 3166-1 alpha-2 country codes
+-  **Multi-RIR support** - Works with all major Regional Internet Registries
+- 🛠 **Easy management** - Simple menu-driven interface for all operations
+-  **Real-time monitoring** - View current iptables rules and statistics
+-  **Flexible removal** - Easily remove country blocks when no longer needed
+-  **Automatic CIDR calculation** - Converts IP ranges to CIDR notation automatically
+- 🛡 **Validation** - Validates country codes and ensures proper iptables chain management
 
-## 🔧 Prerequisites
+## Prerequisites
 
 - Linux operating system
 - Bash shell
@@ -52,7 +52,7 @@ The tool supports all major RIRs:
 - `curl` for downloading RIR data
 - Root/sudo privileges for iptables operations
 
-## 📦 Installation
+## Installation
 
 1. **Clone the repository:**
    ```bash
@@ -71,7 +71,7 @@ The tool supports all major RIRs:
    ./setup.sh
    ```
 
-## 🚀 Usage
+## Usage
 
 ### Quick Start
 
@@ -111,7 +111,7 @@ sudo ./scripts/iptablesConfiguration.sh
 1. Select option **3** from the setup menu
 2. View detailed iptables rules and statistics
 
-## 📁 Scripts Overview
+## Scripts Overview
 
 ### `setup.sh`
 Main menu script that provides an interactive interface to access all IPDroper functionality.
@@ -131,7 +131,7 @@ Main menu script that provides an interactive interface to access all IPDroper f
 - Displays current iptables rules with verbose output
 - Shows packet counts and rule statistics
 
-## 📂 Directory Structure
+## Directory Structure
 
 ```
 IPDroper/
@@ -143,7 +143,7 @@ IPDroper/
     └── iptablesList.sh           # View current rules
 ```
 
-## 🔍 Troubleshooting
+## Troubleshooting
 
 ### Common Issues
 
@@ -187,17 +187,17 @@ To see detailed output, you can run scripts directly:
 sudo bash -x ./scripts/iptablesConfiguration.sh
 ```
 
-## 🤝 Contributing
+## Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request. For major changes, please open an issue first to discuss what you would like to change.
 
-## 📄 License
+## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ---
 
-**⚠️ Warning:** This tool modifies iptables rules and can affect network connectivity. Always test in a safe environment first and ensure you have proper backups of your iptables configuration.
+** Warning:** This tool modifies iptables rules and can affect network connectivity. Always test in a safe environment first and ensure you have proper backups of your iptables configuration.
 
-**📝 Note:** IPDroper is designed for educational and security purposes. Please ensure compliance when using this tool.
+** Note:** IPDroper is designed for educational and security purposes. Please ensure compliance when using this tool.
 
