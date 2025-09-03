@@ -41,13 +41,13 @@ The tool supports all major RIRs:
 
 ## Versions Comparison
 
-| Feature | Traditional Version (iptables) | ipset Version | Improvement |
-|---------|--------------------------------|---------------|-------------|
-| Rule Count | Thousands to tens of thousands | 1 (+ IPs in ipset) | **99% reduction** |
-| Lookup Speed | Linear search | Hash-based search | **10-100x faster** |
-| Memory Usage | High | Low | **50-80% reduction** |
-| Update Speed | Slow | Fast | **5-10x faster** |
-| Management | Complex | Simple | **Significantly improved** |
+| Feature | Traditional Version (iptables) | ipset Version |
+|---------|--------------------------------|---------------|
+| Rule Count | Thousands to tens of thousands | 1 (+ IPs in ipset) |
+| Lookup Speed | Linear search | Hash-based search |
+| Memory Usage | High | Low |
+| Update Speed | Slow | Fast |
+| Management | Complex | Simple |
 
 ### Why Choose ipset Version?
 
