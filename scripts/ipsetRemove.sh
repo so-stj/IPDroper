@@ -54,13 +54,53 @@ remove_country_ipset() {
         return 0
     fi
     
-    # Remove iptables rule if it exists
-    if iptables -C INPUT -m set --match-set "${set_name}" src -j DROP 2>/dev/null; then
-        echo "Removing iptables rule..."
-        iptables -D INPUT -m set --match-set "${set_name}" src -j DROP
-        echo "iptables rule removed successfully"
-    else
-        echo "iptables rule does not exist"
+    # Read action configuration to determine which rule to remove
+    local action="DROP"  # Default action
+    local config_file="/etc/ipdroper/action_config.conf"
+    if [ -f "$config_file" ]; then
+        local config_action=$(cat "$config_file" 2>/dev/null | grep "^ACTION=" | cut -d'=' -f2)
+        if [ -n "$config_action" ]; then
+            action="$config_action"
+        fi
+    fi
+    
+    # Remove iptables rule based on current action
+    local rule_found=false
+    
+    case "$action" in
+        "REJECT")
+            # Try to remove REJECT rule
+            if iptables -C INPUT -m set --match-set "${set_name}" src -j REJECT --reject-with icmp-host-unreachable 2>/dev/null; then
+                echo "Removing iptables REJECT rule..."
+                iptables -D INPUT -m set --match-set "${set_name}" src -j REJECT --reject-with icmp-host-unreachable
+                echo "iptables REJECT rule removed successfully"
+                rule_found=true
+            fi
+            ;;
+        *)
+            # Try to remove DROP rule
+            if iptables -C INPUT -m set --match-set "${set_name}" src -j DROP 2>/dev/null; then
+                echo "Removing iptables DROP rule..."
+                iptables -D INPUT -m set --match-set "${set_name}" src -j DROP
+                echo "iptables DROP rule removed successfully"
+                rule_found=true
+            fi
+            ;;
+    esac
+    
+    # If rule not found with current action, try to find and remove any matching rule
+    if [ "$rule_found" = false ]; then
+        echo "Checking for existing iptables rules..."
+        local rule_line=$(iptables -L INPUT -n --line-numbers | grep "match-set ${set_name}" | head -1)
+        if [ -n "$rule_line" ]; then
+            local rule_number=$(echo "$rule_line" | awk '{print $1}' | tr -d '[:alpha:]')
+            local rule_action=$(echo "$rule_line" | awk '{print $NF}')
+            echo "Found existing rule $rule_number with action $rule_action, removing..."
+            iptables -D INPUT "$rule_number"
+            echo "iptables rule removed successfully"
+        else
+            echo "No iptables rule found for ipset ${set_name}"
+        fi
     fi
     
     # Show ipset contents before removal

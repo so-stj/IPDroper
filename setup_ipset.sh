@@ -4,8 +4,8 @@
 # This is the main menu script for ipset-based country IP blocking
 
 # Script list and descriptions
-declare -a script_list=("ipsetConfiguration.sh" "ipsetRemove.sh" "ipsetList.sh")
-declare -a script_descriptions=("Block country (ipset version)" "Remove block (ipset version)" "Show current status (ipset version)")
+declare -a script_list=("ipsetConfiguration.sh" "ipsetRemove.sh" "ipsetList.sh" "ipsetActionSelect.sh")
+declare -a script_descriptions=("Block country (ipset version)" "Remove block (ipset version)" "Show current status (ipset version)" "Select action type (DROP/REJECT)")
 
 # Scripts directory
 script_dir="./scripts"

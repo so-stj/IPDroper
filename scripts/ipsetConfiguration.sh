@@ -82,8 +82,19 @@ create_country_ipset() {
     local url=$2
     local set_name="DROP-${country}"
     
+    # Read action configuration
+    local action="DROP"  # Default action
+    local config_file="/etc/ipdroper/action_config.conf"
+    if [ -f "$config_file" ]; then
+        local config_action=$(cat "$config_file" 2>/dev/null | grep "^ACTION=" | cut -d'=' -f2)
+        if [ -n "$config_action" ]; then
+            action="$config_action"
+        fi
+    fi
+    
     echo "Blocking IP ranges for ${country}..."
     echo "Downloading RIR data from: ${url}"
+    echo "Action: ${action}"
     
     # Download RIR data
     if ! curl -s "${url}" > /tmp/delegated-latest; then
@@ -136,13 +147,32 @@ create_country_ipset() {
     ipset list "${set_name}" | head -20
     echo "..."
     
+    # Create iptables rule based on selected action
+    local iptables_action=""
+    local iptables_options=""
+    
+    case "$action" in
+        "REJECT")
+            iptables_action="REJECT"
+            iptables_options="--reject-with icmp-host-unreachable"
+            ;;
+        *)
+            iptables_action="DROP"
+            iptables_options=""
+            ;;
+    esac
+    
     # Create iptables rule if it doesn't exist
-    if ! iptables -C INPUT -m set --match-set "${set_name}" src -j DROP 2>/dev/null; then
-        echo "Creating iptables rule..."
-        iptables -A INPUT -m set --match-set "${set_name}" src -j DROP
-        echo "iptables rule created successfully"
+    if ! iptables -C INPUT -m set --match-set "${set_name}" src -j "$iptables_action" $iptables_options 2>/dev/null; then
+        echo "Creating iptables rule with ${iptables_action} action..."
+        if [ -n "$iptables_options" ]; then
+            iptables -A INPUT -m set --match-set "${set_name}" src -j "$iptables_action" $iptables_options
+        else
+            iptables -A INPUT -m set --match-set "${set_name}" src -j "$iptables_action"
+        fi
+        echo "iptables rule created successfully with ${iptables_action} action"
     else
-        echo "iptables rule already exists"
+        echo "iptables rule already exists with ${iptables_action} action"
     fi
 }
 
