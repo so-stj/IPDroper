@@ -41,7 +41,7 @@ The tool supports all major RIRs:
 
 ## Versions Comparison
 
-| Feature | Traditional Version (iptables) | ipset Version |
+| Feature | iptable Version| ipset Version |
 |---------|--------------------------------|---------------|
 | Rule Count | Thousands to tens of thousands | 1 (+ IPs in ipset) |
 | Lookup Speed | Linear search | Hash-based search |
