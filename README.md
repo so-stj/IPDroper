@@ -61,12 +61,10 @@ The tool supports all major RIRs:
 -  **Country-based IP blocking** - Block entire countries using ISO 3166-1 alpha-2 country codes
 -  **Multi-RIR support** - Works with all major Regional Internet Registries
 -  **Easy management** - Simple menu-driven interface for all operations
--  **Real-time monitoring** - View current iptables rules and statistics
 -  **Flexible removal** - Easily remove country blocks when no longer needed
 -  **Automatic CIDR calculation** - Converts IP ranges to CIDR notation automatically
 -  **Validation** - Validates country codes and ensures proper iptables chain management
 -  **High-performance ipset option** - Advanced version with hash-table based IP management
--  **Memory efficient** - 50-80% memory reduction with ipset version
 
 ## Prerequisites
 
