@@ -24,8 +24,8 @@ validate_country_code() {
                        "YT" "ZA" "ZM" "ZW")
     
     if [[ ! " ${valid_codes[@]} " =~ " ${COUNTRY} " ]]; then
-        echo "❌ 無効な国コードです: ${COUNTRY}"
-        echo "有効なISO 3166-1 alpha-2国コードを入力してください。"
+        echo "❌ Invalid country code: ${COUNTRY}"
+        echo "Please enter a valid ISO 3166-1 alpha-2 country code."
         exit 1
     fi
 }
@@ -33,8 +33,8 @@ validate_country_code() {
 # Function to check if ipset is available
 check_ipset() {
     if ! command -v ipset &> /dev/null; then
-        echo "❌ ipsetがインストールされていません。"
-        echo "インストール方法:"
+        echo "❌ ipset is not installed."
+        echo "Installation instructions:"
         echo "  Ubuntu/Debian: sudo apt-get install ipset"
         echo "  CentOS/RHEL: sudo yum install ipset"
         exit 1
@@ -46,47 +46,47 @@ remove_country_ipset() {
     local country=$1
     local set_name="DROP-${country}"
     
-    echo "🗑️ ${country}のIPブロックを削除中..."
+    echo "🗑️ Removing IP block for ${country}..."
     
     # Check if ipset exists
     if ! ipset list -name | grep -q "^${set_name}$"; then
-        echo "ℹ️ ipset ${set_name}は存在しません"
+        echo "ℹ️ ipset ${set_name} does not exist"
         return 0
     fi
     
     # Remove iptables rule if it exists
     if iptables -C INPUT -m set --match-set "${set_name}" src -j DROP 2>/dev/null; then
-        echo "🔓 iptablesルールを削除中..."
+        echo "🔓 Removing iptables rule..."
         iptables -D INPUT -m set --match-set "${set_name}" src -j DROP
-        echo "✅ iptablesルールが削除されました"
+        echo "✅ iptables rule removed successfully"
     else
-        echo "ℹ️ iptablesルールは既に存在しません"
+        echo "ℹ️ iptables rule does not exist"
     fi
     
     # Show ipset contents before removal
-    echo "📊 削除前のipset内容:"
+    echo "📊 ipset contents before removal:"
     ipset list "${set_name}" | head -10
     echo "..."
     
     # Get ipset statistics
     local entry_count=$(ipset list "${set_name}" | grep -c "^[0-9]")
-    echo "📈 エントリ数: ${entry_count}"
+    echo "📈 Entry count: ${entry_count}"
     
     # Remove ipset
-    echo "🗑️ ipsetを削除中: ${set_name}"
+    echo "🗑️ Removing ipset: ${set_name}"
     ipset destroy "${set_name}"
     
     if [ $? -eq 0 ]; then
-        echo "✅ ipset ${set_name}が正常に削除されました"
+        echo "✅ ipset ${set_name} removed successfully"
     else
-        echo "❌ ipsetの削除に失敗しました"
+        echo "❌ Failed to remove ipset"
         exit 1
     fi
 }
 
 # Function to list all available ipsets
 list_available_ipsets() {
-    echo "📋 利用可能なipset一覧:"
+    echo "📋 Available ipset list:"
     echo "================================"
     
     local ipset_count=0
@@ -98,7 +98,7 @@ list_available_ipsets() {
     done
     
     if [ $ipset_count -eq 0 ]; then
-        echo "  ℹ️ ブロックされた国はありません"
+        echo "  ℹ️ No countries are blocked"
     fi
     
     echo ""
@@ -106,7 +106,7 @@ list_available_ipsets() {
 
 # Main execution
 main() {
-    echo "🗑️ IPDroper - ipset削除ツール"
+    echo "🗑️ IPDroper - ipset removal tool"
     echo "================================"
     
     # Check prerequisites
@@ -116,21 +116,21 @@ main() {
     list_available_ipsets
     
     # User input
-    read -p "削除する国のコードを入力してください (例: CN, RU, JP): " COUNTRY
+    read -p "Enter country code to remove (e.g., CN, RU, JP): " COUNTRY
     COUNTRY=$(echo "$COUNTRY" | tr '[:lower:]' '[:upper:]')
     
     # Validate country code
     validate_country_code
     
     echo ""
-    echo "🔍 削除確認:"
-    echo "  国: ${COUNTRY}"
+    echo "🔍 Removal confirmation:"
+    echo "  Country: ${COUNTRY}"
     echo "  ipset: DROP-${COUNTRY}"
     echo ""
     
-    read -p "本当に${COUNTRY}のブロックを削除しますか？ (y/N): " confirm
+    read -p "Are you sure you want to remove the block for ${COUNTRY}? (y/N): " confirm
     if [[ "$confirm" != "y" && "$confirm" != "Y" ]]; then
-        echo "❌ 操作がキャンセルされました"
+        echo "❌ Operation cancelled"
         exit 0
     fi
     
@@ -138,14 +138,14 @@ main() {
     remove_country_ipset "$COUNTRY"
     
     echo ""
-    echo "🎉 ${COUNTRY}のブロック削除が完了しました！"
-    echo "📊 現在のiptablesルール:"
-    iptables -L INPUT -n --line-numbers | grep -E "(DROP|${COUNTRY})" || echo "  ℹ️ 関連するルールはありません"
+    echo "🎉 Block removal for ${COUNTRY} completed successfully!"
+    echo "📊 Current iptables rules:"
+    iptables -L INPUT -n --line-numbers | grep -E "(DROP|${COUNTRY})" || echo "  ℹ️ No related rules found"
     
     echo ""
-    echo "💡 ヒント:"
-    echo "  - 新しい国をブロック: sudo ./scripts/ipsetConfiguration.sh"
-    echo "  - 現在の状態確認: sudo ./scripts/ipsetList.sh"
+    echo "💡 Tips:"
+    echo "  - Block new country: sudo ./scripts/ipsetConfiguration.sh"
+    echo "  - Check status: sudo ./scripts/ipsetList.sh"
 }
 
 # Run main function

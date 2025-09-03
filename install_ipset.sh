@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# IPDroper - ipsetインストールスクリプト
+# IPDroper - ipset installation script
 # This script installs and configures ipset for IPDroper
 
 # Colors for output
@@ -33,103 +33,103 @@ detect_distro() {
 
 # Function to install ipset on Ubuntu/Debian
 install_ipset_debian() {
-    print_status $BLUE "📦 Debian/Ubuntu系ディストリビューションを検出しました"
+    print_status $BLUE "📦 Detected Debian/Ubuntu-based distribution"
     
     # Update package list
-    print_status $YELLOW "パッケージリストを更新中..."
+    print_status $YELLOW "Updating package list..."
     apt-get update
     
     # Install ipset
-    print_status $YELLOW "ipsetをインストール中..."
+    print_status $YELLOW "Installing ipset..."
     apt-get install -y ipset
     
     # Install iptables if not present
     if ! command -v iptables &> /dev/null; then
-        print_status $YELLOW "iptablesをインストール中..."
+        print_status $YELLOW "Installing iptables..."
         apt-get install -y iptables
     fi
     
     # Install curl if not present
     if ! command -v curl &> /dev/null; then
-        print_status $YELLOW "curlをインストール中..."
+        print_status $YELLOW "Installing curl..."
         apt-get install -y curl
     fi
 }
 
 # Function to install ipset on CentOS/RHEL
 install_ipset_rhel() {
-    print_status $BLUE "📦 CentOS/RHEL系ディストリビューションを検出しました"
+    print_status $BLUE "📦 Detected CentOS/RHEL-based distribution"
     
     # Install ipset
-    print_status $YELLOW "ipsetをインストール中..."
+    print_status $YELLOW "Installing ipset..."
     yum install -y ipset
     
     # Install iptables if not present
     if ! command -v iptables &> /dev/null; then
-        print_status $YELLOW "iptablesをインストール中..."
+        print_status $YELLOW "Installing iptables..."
         yum install -y iptables
     fi
     
     # Install curl if not present
     if ! command -v curl &> /dev/null; then
-        print_status $YELLOW "curlをインストール中..."
+        print_status $YELLOW "Installing curl..."
         yum install -y curl
     fi
 }
 
 # Function to install ipset on Arch Linux
 install_ipset_arch() {
-    print_status $BLUE "📦 Arch Linux系ディストリビューションを検出しました"
+    print_status $BLUE "📦 Detected Arch Linux-based distribution"
     
     # Install ipset
-    print_status $YELLOW "ipsetをインストール中..."
+    print_status $YELLOW "Installing ipset..."
     pacman -S --noconfirm ipset
     
     # Install iptables if not present
     if ! command -v iptables &> /dev/null; then
-        print_status $YELLOW "iptablesをインストール中..."
+        print_status $YELLOW "Installing iptables..."
         pacman -S --noconfirm iptables
     fi
     
     # Install curl if not present
     if ! command -v curl &> /dev/null; then
-        print_status $YELLOW "curlをインストール中..."
+        print_status $YELLOW "Installing curl..."
         pacman -S --noconfirm curl
     fi
 }
 
 # Function to check kernel support
 check_kernel_support() {
-    print_status $BLUE "🔍 カーネルのipsetサポートをチェック中..."
+    print_status $BLUE "🔍 Checking kernel ipset support..."
     
     # Check if ipset modules are available
     if [ -d "/lib/modules/$(uname -r)/kernel/net/netfilter/ipset" ]; then
-        print_status $GREEN "✅ カーネルがipsetをサポートしています"
+        print_status $GREEN "✅ Kernel supports ipset"
         return 0
     else
-        print_status $RED "❌ カーネルがipsetをサポートしていません"
-        print_status $YELLOW "カーネルの再コンパイルまたは更新が必要です"
+        print_status $RED "❌ Kernel does not support ipset"
+        print_status $YELLOW "Kernel recompilation or update may be required"
         return 1
     fi
 }
 
 # Function to load ipset modules
 load_ipset_modules() {
-    print_status $BLUE "📥 ipsetカーネルモジュールを読み込み中..."
+    print_status $BLUE "📥 Loading ipset kernel modules..."
     
     # Load ipset module
     if modprobe ip_set; then
-        print_status $GREEN "✅ ip_setモジュールが読み込まれました"
+        print_status $GREEN "✅ ip_set module loaded successfully"
     else
-        print_status $RED "❌ ip_setモジュールの読み込みに失敗しました"
+        print_status $RED "❌ Failed to load ip_set module"
         return 1
     fi
     
     # Load hash:net module
     if modprobe ip_set_hash_net; then
-        print_status $GREEN "✅ ip_set_hash_netモジュールが読み込まれました"
+        print_status $GREEN "✅ ip_set_hash_net module loaded successfully"
     else
-        print_status $RED "❌ ip_set_hash_netモジュールの読み込みに失敗しました"
+        print_status $RED "❌ Failed to load ip_set_hash_net module"
         return 1
     fi
     
@@ -138,7 +138,7 @@ load_ipset_modules() {
 
 # Function to configure persistent module loading
 configure_persistent_modules() {
-    print_status $BLUE "🔧 永続的なモジュール読み込みを設定中..."
+    print_status $BLUE "🔧 Configuring persistent module loading..."
     
     local distro=$(detect_distro)
     local modules_file=""
@@ -154,7 +154,7 @@ configure_persistent_modules() {
             modules_file="/etc/modules-load.d/ipset.conf"
             ;;
         *)
-            print_status $YELLOW "⚠️ このディストリビューションの永続化設定は手動で行う必要があります"
+            print_status $YELLOW "⚠️ Manual configuration required for this distribution"
             return 0
             ;;
     esac
@@ -167,90 +167,90 @@ configure_persistent_modules() {
     # Check if modules are already added
     if ! grep -q "ip_set" "$modules_file"; then
         echo "ip_set" >> "$modules_file"
-        print_status $GREEN "✅ ip_setを$modules_fileに追加しました"
+        print_status $GREEN "✅ Added ip_set to $modules_file"
     fi
     
     if ! grep -q "ip_set_hash_net" "$modules_file"; then
         echo "ip_set_hash_net" >> "$modules_file"
-        print_status $GREEN "✅ ip_set_hash_netを$modules_fileに追加しました"
+        print_status $GREEN "✅ Added ip_set_hash_net to $modules_file"
     fi
     
-    print_status $GREEN "✅ 永続的なモジュール読み込みが設定されました"
+    print_status $GREEN "✅ Persistent module loading configured"
 }
 
 # Function to test ipset functionality
 test_ipset() {
-    print_status $BLUE "🧪 ipsetの動作テスト中..."
+    print_status $BLUE "🧪 Testing ipset functionality..."
     
     # Create test ipset
     if ipset create test_set hash:net family inet hashsize 1024 maxelem 65536 2>/dev/null; then
-        print_status $GREEN "✅ テストipsetの作成に成功しました"
+        print_status $GREEN "✅ Successfully created test ipset"
         
         # Add test entry
         if ipset add test_set 192.168.1.0/24 2>/dev/null; then
-            print_status $GREEN "✅ テストエントリの追加に成功しました"
+            print_status $GREEN "✅ Successfully added test entry"
             
             # List test ipset
             if ipset list test_set >/dev/null 2>&1; then
-                print_status $GREEN "✅ ipsetの一覧表示に成功しました"
+                print_status $GREEN "✅ Successfully listed ipset"
                 
                 # Remove test ipset
                 if ipset destroy test_set 2>/dev/null; then
-                    print_status $GREEN "✅ テストipsetの削除に成功しました"
+                    print_status $GREEN "✅ Successfully removed test ipset"
                     return 0
                 else
-                    print_status $RED "❌ テストipsetの削除に失敗しました"
+                    print_status $RED "❌ Failed to remove test ipset"
                     return 1
                 fi
             else
-                print_status $RED "❌ ipsetの一覧表示に失敗しました"
+                print_status $RED "❌ Failed to list ipset"
                 return 1
             fi
         else
-            print_status $RED "❌ テストエントリの追加に失敗しました"
+            print_status $RED "❌ Failed to add test entry"
             ipset destroy test_set 2>/dev/null
             return 1
         fi
     else
-        print_status $RED "❌ テストipsetの作成に失敗しました"
+        print_status $RED "❌ Failed to create test ipset"
         return 1
     fi
 }
 
 # Function to show installation summary
 show_summary() {
-    print_status $GREEN "🎉 ipsetのインストールが完了しました！"
+    print_status $GREEN "🎉 ipset installation completed successfully!"
     echo ""
-    echo "📋 インストールされたパッケージ:"
+    echo "📋 Installed packages:"
     echo "  ✅ ipset: $(ipset --version 2>/dev/null | head -1 || echo 'N/A')"
     echo "  ✅ iptables: $(iptables --version 2>/dev/null | head -1 || echo 'N/A')"
     echo "  ✅ curl: $(curl --version 2>/dev/null | head -1 || echo 'N/A')"
     echo ""
-    echo "🔧 設定された項目:"
-    echo "  ✅ カーネルモジュールの読み込み"
-    echo "  ✅ 永続的なモジュール読み込み設定"
-    echo "  ✅ ipsetの動作テスト"
+    echo "🔧 Configured items:"
+    echo "  ✅ Kernel module loading"
+    echo "  ✅ Persistent module loading configuration"
+    echo "  ✅ ipset functionality test"
     echo ""
-    echo "🚀 次のステップ:"
-    echo "  1. sudo ./setup_ipset.sh を実行してIPDroperを開始"
-    echo "  2. 初回使用時はオプション1から開始してください"
+    echo "🚀 Next steps:"
+    echo "  1. Run sudo ./setup_ipset.sh to start IPDroper"
+    echo "  2. For first-time use, start with option 1"
     echo ""
-    echo "💡 ヘルプ:"
-    echo "  ./setup_ipset.sh --help で詳細なヘルプを表示"
+    echo "💡 Help:"
+    echo "  ./setup_ipset.sh --help for detailed help"
     echo ""
 }
 
 # Main execution
 main() {
-    print_status $BLUE "🚀 IPDroper - ipsetインストーラー"
+    print_status $BLUE "🚀 IPDroper - ipset installer"
     echo "=========================================="
-    echo "国別IPブロックツール用のipsetをインストールします"
+    echo "Installing ipset for country-based IP blocking tool"
     echo ""
     
     # Check if running as root
     if [ "$EUID" -ne 0 ]; then
-        print_status $RED "❌ このスクリプトはroot権限で実行する必要があります"
-        echo "sudo ./install_ipset.sh を使用してください"
+        print_status $RED "❌ This script requires root privileges"
+        echo "Please use: sudo ./install_ipset.sh"
         exit 1
     fi
     
@@ -267,8 +267,8 @@ main() {
             install_ipset_arch
             ;;
         *)
-            print_status $RED "❌ サポートされていないディストリビューションです: $distro"
-            echo "手動でipset、iptables、curlをインストールしてください"
+            print_status $RED "❌ Unsupported distribution: $distro"
+            echo "Please manually install ipset, iptables, and curl"
             exit 1
             ;;
     esac
@@ -288,7 +288,7 @@ main() {
     
     # Test ipset functionality
     if ! test_ipset; then
-        print_status $RED "❌ ipsetの動作テストに失敗しました"
+        print_status $RED "❌ ipset functionality test failed"
         exit 1
     fi
     

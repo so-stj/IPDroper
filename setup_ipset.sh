@@ -1,125 +1,125 @@
 #!/bin/bash
 
-# IPDroper - ipset版メインメニュー
+# IPDroper - ipset version main menu
 # This is the main menu script for ipset-based country IP blocking
 
 # Script list and descriptions
 declare -a script_list=("ipsetConfiguration.sh" "ipsetRemove.sh" "ipsetList.sh")
-declare -a script_descriptions=("国をブロック (ipset版)" "ブロックを削除 (ipset版)" "現在の状態を表示 (ipset版)")
+declare -a script_descriptions=("Block country (ipset version)" "Remove block (ipset version)" "Show current status (ipset version)")
 
 # Scripts directory
 script_dir="./scripts"
 
 # Validate scripts directory
 if [ ! -d "$script_dir" ]; then
-    echo "❌ スクリプトディレクトリが見つかりません: $script_dir"
+    echo "❌ Script directory not found: $script_dir"
     exit 1
 fi
 
 # Function to check prerequisites
 check_prerequisites() {
-    echo "🔍 前提条件をチェック中..."
+    echo "🔍 Checking prerequisites..."
     
     # Check if running as root
     if [ "$EUID" -ne 0 ]; then
-        echo "❌ このスクリプトはroot権限で実行する必要があります"
-        echo "sudo ./setup_ipset.sh を使用してください"
+        echo "❌ This script requires root privileges"
+        echo "Please use: sudo ./setup_ipset.sh"
         exit 1
     fi
     
     # Check if ipset is available
     if ! command -v ipset &> /dev/null; then
-        echo "❌ ipsetがインストールされていません"
+        echo "❌ ipset is not installed"
         echo ""
-        echo "📦 インストール方法:"
+        echo "📦 Installation instructions:"
         echo "  Ubuntu/Debian: sudo apt-get install ipset"
         echo "  CentOS/RHEL: sudo yum install ipset"
         echo "  Arch Linux: sudo pacman -S ipset"
         echo ""
-        echo "インストール後、このスクリプトを再実行してください"
+        echo "Please install ipset and run this script again"
         exit 1
     fi
     
     # Check if iptables is available
     if ! command -v iptables &> /dev/null; then
-        echo "❌ iptablesがインストールされていません"
+        echo "❌ iptables is not installed"
         echo ""
-        echo "📦 インストール方法:"
+        echo "📦 Installation instructions:"
         echo "  Ubuntu/Debian: sudo apt-get install iptables"
         echo "  CentOS/RHEL: sudo yum install iptables"
         echo "  Arch Linux: sudo pacman -S iptables"
         echo ""
-        echo "インストール後、このスクリプトを再実行してください"
+        echo "Please install iptables and run this script again"
         exit 1
     fi
     
     # Check if curl is available
     if ! command -v curl &> /dev/null; then
-        echo "❌ curlがインストールされていません"
+        echo "❌ curl is not installed"
         echo ""
-        echo "📦 インストール方法:"
+        echo "📦 Installation instructions:"
         echo "  Ubuntu/Debian: sudo apt-get install curl"
         echo "  CentOS/RHEL: sudo yum install curl"
         echo "  Arch Linux: sudo pacman -S curl"
         echo ""
-        echo "インストール後、このスクリプトを再実行してください"
+        echo "Please install curl and run this script again"
         exit 1
     fi
     
     # Load ipset modules if needed
     if ! lsmod | grep -q "ip_set"; then
-        echo "📥 ipsetカーネルモジュールを読み込み中..."
+        echo "📥 Loading ipset kernel modules..."
         modprobe ip_set
         modprobe ip_set_hash_net
         
         if ! lsmod | grep -q "ip_set"; then
-            echo "❌ ipsetカーネルモジュールの読み込みに失敗しました"
-            echo "カーネルがipsetをサポートしているか確認してください"
+            echo "❌ Failed to load ipset kernel modules"
+            echo "Please check if your kernel supports ipset"
             exit 1
         fi
     fi
     
-    echo "✅ 前提条件チェック完了"
+    echo "✅ Prerequisites check completed"
     echo ""
 }
 
 # Function to show current status
 show_current_status() {
-    echo "📊 現在の状態"
+    echo "📊 Current status"
     echo "================================"
     
     # Show blocked countries
     local blocked_countries=$(ipset list -name 2>/dev/null | grep "^DROP-" | wc -l)
     if [ "$blocked_countries" -gt 0 ]; then
-        echo "🌍 ブロックされた国: ${blocked_countries}カ国"
+        echo "🌍 Blocked countries: ${blocked_countries}"
         for set_name in $(ipset list -name 2>/dev/null | grep "^DROP-"); do
             local country_code=$(echo "$set_name" | sed 's/^DROP-//')
             local entry_count=$(ipset list "$set_name" 2>/dev/null | grep -c "^[0-9]" || echo "0")
-            echo "  ${country_code}: ${entry_count}個のIP範囲"
+            echo "  ${country_code}: ${entry_count} IP ranges"
         done
     else
-        echo "ℹ️ ブロックされた国はありません"
+        echo "ℹ️ No countries are blocked"
     fi
     
     echo ""
     
     # Show iptables rules
     local ipset_rules=$(iptables -L INPUT -n 2>/dev/null | grep -c "ipset" || echo "0")
-    echo "🔒 ipset関連のiptablesルール: ${ipset_rules}個"
+    echo "🔒 ipset-related iptables rules: ${ipset_rules}"
     
     echo ""
 }
 
 # Function to show menu
 show_menu() {
-    echo "🚀 IPDroper - ipset版"
+    echo "🚀 IPDroper - ipset version"
     echo "================================"
-    echo "国別IPブロックツール (高性能ipset版)"
+    echo "Country-based IP blocking tool (high-performance ipset version)"
     echo ""
     
     show_current_status
     
-    echo "📋 利用可能なスクリプト:"
+    echo "📋 Available scripts:"
     local index=1
     for script in "${script_list[@]}"; do
         local description="${script_descriptions[$((index-1))]}"
@@ -128,10 +128,10 @@ show_menu() {
     done
     
     echo ""
-    echo "💡 ヒント:"
-    echo "  - 初回使用時はオプション1から開始してください"
-    echo "  - 現在の状態確認はオプション3を使用してください"
-    echo "  - ブロック削除はオプション2を使用してください"
+    echo "💡 Tips:"
+    echo "  - For first-time use, start with option 1"
+    echo "  - Check current status with option 3"
+    echo "  - Remove blocks with option 2"
     echo ""
 }
 
@@ -142,7 +142,7 @@ run_script() {
     
     # Check if script exists
     if [ ! -f "$script_file" ]; then
-        echo "❌ スクリプトが見つかりません: $script_file"
+        echo "❌ Script not found: $script_file"
         return 1
     fi
     
@@ -154,34 +154,34 @@ run_script() {
     local description="${script_descriptions[$((selected_index-1))]}"
     
     echo ""
-    echo "🔍 選択されたスクリプト: $selected"
-    echo "説明: $description"
+    echo "🔍 Selected script: $selected"
+    echo "Description: $description"
     echo ""
     
-    read -p "このスクリプトを実行しますか？ (y/N): " confirm
+    read -p "Do you want to run this script? (y/N): " confirm
     if [[ "$confirm" == "y" || "$confirm" == "Y" ]]; then
-        echo "🚀 スクリプトを実行中..."
+        echo "🚀 Running script..."
         echo ""
         
         # Run script
         bash "$script_file"
         
         echo ""
-        echo "✅ スクリプトの実行が完了しました"
+        echo "✅ Script execution completed"
     else
-        echo "❌ スクリプトの実行がキャンセルされました"
+        echo "❌ Script execution cancelled"
     fi
 }
 
 # Function to handle user selection
 handle_selection() {
-    echo "選択してください:"
-    PS3="番号を入力してください: "
+    echo "Please select:"
+    PS3="Enter number: "
     
     select selected in "${script_list[@]}"; do
         if [ -z "$selected" ]; then
-            echo "❌ 無効な選択です"
-            echo "1-${#script_list[@]}の間の番号を入力してください"
+            echo "❌ Invalid selection"
+            echo "Please enter a number between 1-${#script_list[@]}"
         else
             run_script "$selected"
             break
@@ -191,39 +191,39 @@ handle_selection() {
 
 # Function to show help
 show_help() {
-    echo "📖 IPDroper - ipset版 ヘルプ"
+    echo "📖 IPDroper - ipset version help"
     echo "================================"
     echo ""
-    echo "🌍 国別IPブロックツール"
-    echo "このツールはipsetを使用して、特定の国からのIPアドレスを"
-    echo "効率的にブロックします。従来のiptables方式と比較して、"
-    echo "大幅なパフォーマンス向上と管理の簡素化を実現します。"
+    echo "🌍 Country-based IP blocking tool"
+    echo "This tool uses ipset to efficiently block IP addresses from"
+    echo "specific countries. Compared to traditional iptables method,"
+    echo "it achieves significant performance improvements and simplified management."
     echo ""
-    echo "✨ 主な特徴:"
-    echo "  - 高速なIPルックアップ (ハッシュテーブルベース)"
-    echo "  - メモリ効率の良い管理"
-    echo "  - 数千のIP範囲でも単一のiptablesルール"
-    echo "  - 簡単な追加・削除・更新操作"
+    echo "✨ Main features:"
+    echo "  - Fast IP lookup (hash table based)"
+    echo "  - Memory efficient management"
+    echo "  - Single iptables rule for thousands of IP ranges"
+    echo "  - Easy add/remove/update operations"
     echo ""
-    echo "🔧 前提条件:"
-    echo "  - Linux カーネル (ipsetサポート)"
-    echo "  - ipset パッケージ"
-    echo "  - iptables パッケージ"
-    echo "  - curl パッケージ"
-    echo "  - root権限"
+    echo "🔧 Prerequisites:"
+    echo "  - Linux kernel (ipset support)"
+    echo "  - ipset package"
+    echo "  - iptables package"
+    echo "  - curl package"
+    echo "  - Root privileges"
     echo ""
-    echo "📚 使用方法:"
-    echo "  1. 国をブロック: オプション1"
-    echo "  2. ブロックを削除: オプション2"
-    echo "  3. 状態を確認: オプション3"
+    echo "📚 Usage:"
+    echo "  1. Block country: Option 1"
+    echo "  2. Remove block: Option 2"
+    echo "  3. Check status: Option 3"
     echo ""
-    echo "💡 パフォーマンス比較:"
-    echo "  | 項目 | iptables方式 | ipset方式 |"
-    echo "  |------|-------------|-----------|"
-    echo "  | ルール数 | 数千〜数万 | 1 (+ipset内のIP) |"
-    echo "  | ルックアップ | 線形検索 | ハッシュ検索 |"
-    echo "  | メモリ使用量 | 多い | 少ない |"
-    echo "  | 更新速度 | 遅い | 高速 |"
+    echo "💡 Performance comparison:"
+    echo "  | Item | iptables method | ipset method |"
+    echo "  |------|-----------------|--------------|"
+    echo "  | Rule count | Thousands~Tens of thousands | 1 (+IPs in ipset) |"
+    echo "  | Lookup speed | Linear search | Hash search |"
+    echo "  | Memory usage | High | Low |"
+    echo "  | Update speed | Slow | Fast |"
     echo ""
 }
 
@@ -245,8 +245,8 @@ main() {
     handle_selection
     
     echo ""
-    echo "👋 IPDroper - ipset版を終了します"
-    echo "またのご利用をお待ちしています！"
+    echo "👋 Exiting IPDroper - ipset version"
+    echo "Thank you for using our tool!"
 }
 
 # Run main function

@@ -6,8 +6,8 @@
 # Function to check if ipset is available
 check_ipset() {
     if ! command -v ipset &> /dev/null; then
-        echo "❌ ipsetがインストールされていません。"
-        echo "インストール方法:"
+        echo "❌ ipset is not installed."
+        echo "Installation instructions:"
         echo "  Ubuntu/Debian: sudo apt-get install ipset"
         echo "  CentOS/RHEL: sudo yum install ipset"
         exit 1
@@ -16,7 +16,7 @@ check_ipset() {
 
 # Function to display ipset statistics
 display_ipset_stats() {
-    echo "📊 ipset統計情報"
+    echo "📊 ipset statistics"
     echo "================================"
     
     local total_entries=0
@@ -29,8 +29,8 @@ display_ipset_stats() {
         
         echo "  🌍 ${country_code}:"
         echo "    ipset: ${set_name}"
-        echo "    エントリ数: ${entry_count}"
-        echo "    メモリ使用量: ${memory_usage}"
+        echo "    Entry count: ${entry_count}"
+        echo "    Memory usage: ${memory_usage}"
         echo ""
         
         total_entries=$((total_entries + entry_count))
@@ -38,11 +38,11 @@ display_ipset_stats() {
     done
     
     if [ $total_ipsets -eq 0 ]; then
-        echo "  ℹ️ ブロックされた国はありません"
+        echo "  ℹ️ No countries are blocked"
     else
-        echo "📈 総計:"
-        echo "  ブロックされた国数: ${total_ipsets}"
-        echo "  総エントリ数: ${total_entries}"
+        echo "📈 Summary:"
+        echo "  Blocked countries: ${total_ipsets}"
+        echo "  Total entries: ${total_entries}"
     fi
     
     echo ""
@@ -50,41 +50,41 @@ display_ipset_stats() {
 
 # Function to display iptables rules
 display_iptables_rules() {
-    echo "🔒 iptablesルール"
+    echo "🔒 iptables rules"
     echo "================================"
     
     # Show INPUT chain rules related to ipset
-    echo "INPUTチェーン (ipset関連):"
-    iptables -L INPUT -n --line-numbers | grep -E "(DROP|ipset)" || echo "  ℹ️ ipset関連のルールはありません"
+    echo "INPUT chain (ipset related):"
+    iptables -L INPUT -n --line-numbers | grep -E "(DROP|ipset)" || echo "  ℹ️ No ipset-related rules found"
     
     echo ""
     
     # Show all chains
-    echo "全チェーン:"
-    iptables -L -n --line-numbers | grep -E "^Chain|DROP-" || echo "  ℹ️ チェーンが見つかりません"
+    echo "All chains:"
+    iptables -L -n --line-numbers | grep -E "^Chain|DROP-" || echo "  ℹ️ No chains found"
     
     echo ""
 }
 
 # Function to display system information
 display_system_info() {
-    echo "💻 システム情報"
+    echo "💻 System information"
     echo "================================"
     
     # Kernel version
-    echo "カーネルバージョン: $(uname -r)"
+    echo "Kernel version: $(uname -r)"
     
     # iptables version
     local iptables_version=$(iptables --version 2>/dev/null | head -1 || echo "N/A")
-    echo "iptablesバージョン: ${iptables_version}"
+    echo "iptables version: ${iptables_version}"
     
     # ipset version
     local ipset_version=$(ipset --version 2>/dev/null | head -1 || echo "N/A")
-    echo "ipsetバージョン: ${ipset_version}"
+    echo "ipset version: ${ipset_version}"
     
     # Loaded ipset modules
-    echo "読み込まれたipsetモジュール:"
-    lsmod | grep "ip_set" || echo "  ℹ️ ipsetモジュールは読み込まれていません"
+    echo "Loaded ipset modules:"
+    lsmod | grep "ip_set" || echo "  ℹ️ No ipset modules loaded"
     
     echo ""
 }
@@ -94,21 +94,21 @@ display_detailed_ipset() {
     local set_name=$1
     
     if [ -z "$set_name" ]; then
-        echo "詳細表示するipset名を入力してください:"
-        read -p "ipset名 (例: DROP-CN): " set_name
+        echo "Enter ipset name to display details:"
+        read -p "ipset name (e.g., DROP-CN): " set_name
     fi
     
     if [ -z "$set_name" ]; then
-        echo "❌ ipset名が指定されていません"
+        echo "❌ No ipset name specified"
         return 1
     fi
     
     if ! ipset list -name | grep -q "^${set_name}$"; then
-        echo "❌ ipset ${set_name}は存在しません"
+        echo "❌ ipset ${set_name} does not exist"
         return 1
     fi
     
-    echo "🔍 ${set_name}の詳細情報"
+    echo "🔍 Detailed information for ${set_name}"
     echo "================================"
     
     # Show full ipset contents
@@ -117,23 +117,23 @@ display_detailed_ipset() {
     echo ""
     
     # Show iptables rules using this ipset
-    echo "このipsetを使用するiptablesルール:"
-    iptables -L -n | grep -E "${set_name}" || echo "  ℹ️ 関連するルールはありません"
+    echo "iptables rules using this ipset:"
+    iptables -L -n | grep -E "${set_name}" || echo "  ℹ️ No related rules found"
 }
 
 # Function to show performance metrics
 display_performance_metrics() {
-    echo "⚡ パフォーマンス指標"
+    echo "⚡ Performance metrics"
     echo "================================"
     
     # Show iptables statistics
-    echo "iptables統計:"
-    iptables -L INPUT -v -n | grep -E "(DROP|ipset)" || echo "  ℹ️ 統計情報はありません"
+    echo "iptables statistics:"
+    iptables -L INPUT -v -n | grep -E "(DROP|ipset)" || echo "  ℹ️ No statistics available"
     
     echo ""
     
     # Show ipset performance info
-    echo "ipsetパフォーマンス情報:"
+    echo "ipset performance information:"
     for set_name in $(ipset list -name | grep "^DROP-"); do
         local country_code=$(echo "$set_name" | sed 's/^DROP-//')
         echo "  ${country_code}:"
@@ -145,21 +145,21 @@ display_performance_metrics() {
 
 # Main execution
 main() {
-    echo "📋 IPDroper - ipset状態表示ツール"
+    echo "📋 IPDroper - ipset status display tool"
     echo "================================"
     
     # Check prerequisites
     check_ipset
     
     # Display menu
-    echo "表示オプションを選択してください:"
-    echo "1) 概要表示 (推奨)"
-    echo "2) 詳細表示"
-    echo "3) 特定のipset詳細"
-    echo "4) パフォーマンス指標"
-    echo "5) 全情報表示"
+    echo "Select display option:"
+    echo "1) Overview display (recommended)"
+    echo "2) Detailed display"
+    echo "3) Specific ipset details"
+    echo "4) Performance metrics"
+    echo "5) All information"
     
-    read -p "番号を入力してください (1-5): " choice
+    read -p "Enter number (1-5): " choice
     
     case $choice in
         1)
@@ -189,16 +189,16 @@ main() {
             display_performance_metrics
             ;;
         *)
-            echo "❌ 無効な選択です"
+            echo "❌ Invalid selection"
             exit 1
             ;;
     esac
     
     echo ""
-    echo "💡 ヒント:"
-    echo "  - 新しい国をブロック: sudo ./scripts/ipsetConfiguration.sh"
-    echo "  - ブロックを削除: sudo ./scripts/ipsetRemove.sh"
-    echo "  - このツールを再実行: sudo ./scripts/ipsetList.sh"
+    echo "💡 Tips:"
+    echo "  - Block new country: sudo ./scripts/ipsetConfiguration.sh"
+    echo "  - Remove block: sudo ./scripts/ipsetRemove.sh"
+    echo "  - Run this tool again: sudo ./scripts/ipsetList.sh"
 }
 
 # Run main function

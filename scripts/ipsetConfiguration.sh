@@ -24,8 +24,8 @@ validate_country_code() {
                        "YT" "ZA" "ZM" "ZW")
     
     if [[ ! " ${valid_codes[@]} " =~ " ${COUNTRY} " ]]; then
-        echo "❌ 無効な国コードです: ${COUNTRY}"
-        echo "有効なISO 3166-1 alpha-2国コードを入力してください。"
+        echo "❌ Invalid country code: ${COUNTRY}"
+        echo "Please enter a valid ISO 3166-1 alpha-2 country code."
         exit 1
     fi
 }
@@ -61,8 +61,8 @@ calculate_cidr() {
 # Function to check if ipset is available
 check_ipset() {
     if ! command -v ipset &> /dev/null; then
-        echo "❌ ipsetがインストールされていません。"
-        echo "インストール方法:"
+        echo "❌ ipset is not installed."
+        echo "Installation instructions:"
         echo "  Ubuntu/Debian: sudo apt-get install ipset"
         echo "  CentOS/RHEL: sudo yum install ipset"
         exit 1
@@ -70,7 +70,7 @@ check_ipset() {
     
     # Check if ipset module is loaded
     if ! lsmod | grep -q "ip_set"; then
-        echo "📥 ipsetカーネルモジュールを読み込み中..."
+        echo "📥 Loading ipset kernel modules..."
         modprobe ip_set
         modprobe ip_set_hash_net
     fi
@@ -82,27 +82,27 @@ create_country_ipset() {
     local url=$2
     local set_name="DROP-${country}"
     
-    echo "🌍 ${country}のIP範囲をブロック中..."
-    echo "📥 RIRデータをダウンロード中: ${url}"
+    echo "🌍 Blocking IP ranges for ${country}..."
+    echo "📥 Downloading RIR data from: ${url}"
     
     # Download RIR data
     if ! curl -s "${url}" > /tmp/delegated-latest; then
-        echo "❌ RIRデータのダウンロードに失敗しました: ${url}"
+        echo "❌ Failed to download RIR data from: ${url}"
         exit 1
     fi
     
     # Remove existing ipset if it exists
     if ipset list -name | grep -q "^${set_name}$"; then
-        echo "🗑️ 既存のipsetを削除中: ${set_name}"
+        echo "🗑️ Removing existing ipset: ${set_name}"
         ipset destroy "${set_name}"
     fi
     
     # Create new ipset
-    echo "🆕 ipsetを作成中: ${set_name}"
+    echo "🆕 Creating ipset: ${set_name}"
     ipset create "${set_name}" hash:net family inet hashsize 1024 maxelem 65536
     
     # Process IP ranges
-    echo "⚡ IP範囲を処理中..."
+    echo "⚡ Processing IP ranges..."
     local count=0
     local valid_ranges=0
     
@@ -126,43 +126,43 @@ create_country_ipset() {
     done < /tmp/delegated-latest
     
     echo ""
-    echo "📊 処理完了: ${valid_ranges}個の有効なIP範囲を${set_name}に追加"
+    echo "📊 Processing complete: ${valid_ranges} valid IP ranges added to ${set_name}"
     
     # Clean up temporary file
     rm -f /tmp/delegated-latest
     
     # Show ipset statistics
-    echo "📈 ipset統計:"
+    echo "📈 ipset statistics:"
     ipset list "${set_name}" | head -20
     echo "..."
     
     # Create iptables rule if it doesn't exist
     if ! iptables -C INPUT -m set --match-set "${set_name}" src -j DROP 2>/dev/null; then
-        echo "🔒 iptablesルールを作成中..."
+        echo "🔒 Creating iptables rule..."
         iptables -A INPUT -m set --match-set "${set_name}" src -j DROP
-        echo "✅ iptablesルールが作成されました"
+        echo "✅ iptables rule created successfully"
     else
-        echo "ℹ️ iptablesルールは既に存在します"
+        echo "ℹ️ iptables rule already exists"
     fi
 }
 
 # Main execution
 main() {
-    echo "🚀 IPDroper - ipset版"
+    echo "🚀 IPDroper - ipset version"
     echo "================================"
     
     # Check prerequisites
     check_ipset
     
     # User input
-    echo "地域インターネットレジストリを選択してください:"
+    echo "Please select Regional Internet Registry:"
     echo "1) APNIC (Asia Pacific)"
     echo "2) RIPE-NCC (Europe)"
     echo "3) ARIN (North America)"
     echo "4) LACNIC (Latin America)"
     echo "5) AFRINIC (Africa)"
     
-    read -p "番号を入力してください (1-5): " org_choice
+    read -p "Enter number (1-5): " org_choice
     
     case $org_choice in
         1) url="https://ftp.apnic.net/stats/apnic/delegated-apnic-latest" ;;
@@ -170,24 +170,24 @@ main() {
         3) url="https://ftp.arin.net/pub/stats/arin/delegated-arin-extended-latest" ;;
         4) url="https://ftp.lacnic.net/pub/stats/ripencc/delegated-ripencc-latest" ;;
         5) url="https://ftp.afrinic.net/pub/stats/afrinic/delegated-afrinic-latest" ;;
-        *) echo "❌ 無効な選択です"; exit 1 ;;
+        *) echo "❌ Invalid selection"; exit 1 ;;
     esac
     
-    read -p "国コードを入力してください (例: CN, RU, JP): " COUNTRY
+    read -p "Enter country code (e.g., CN, RU, JP): " COUNTRY
     COUNTRY=$(echo "$COUNTRY" | tr '[:lower:]' '[:upper:]')
     
     # Validate country code
     validate_country_code
     
     echo ""
-    echo "🔍 設定確認:"
-    echo "  国: ${COUNTRY}"
+    echo "🔍 Configuration confirmation:"
+    echo "  Country: ${COUNTRY}"
     echo "  RIR: $url"
     echo ""
     
-    read -p "続行しますか？ (y/N): " confirm
+    read -p "Continue? (y/N): " confirm
     if [[ "$confirm" != "y" && "$confirm" != "Y" ]]; then
-        echo "❌ 操作がキャンセルされました"
+        echo "❌ Operation cancelled"
         exit 0
     fi
     
@@ -195,14 +195,14 @@ main() {
     create_country_ipset "$COUNTRY" "$url"
     
     echo ""
-    echo "🎉 ${COUNTRY}のブロックが完了しました！"
-    echo "📊 現在のiptablesルール:"
+    echo "🎉 Blocking of ${COUNTRY} completed successfully!"
+    echo "📊 Current iptables rules:"
     iptables -L INPUT -n --line-numbers | grep -E "(DROP|${COUNTRY})"
     
     echo ""
-    echo "💡 ヒント:"
-    echo "  - ブロックを解除: sudo ./scripts/ipsetRemove.sh"
-    echo "  - 現在の状態確認: sudo ./scripts/ipsetList.sh"
+    echo "💡 Tips:"
+    echo "  - Remove block: sudo ./scripts/ipsetRemove.sh"
+    echo "  - Check status: sudo ./scripts/ipsetList.sh"
 }
 
 # Run main function
