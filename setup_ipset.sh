@@ -115,6 +115,17 @@ show_menu() {
     echo "IPDroper - ipset version"
     echo "================================"
     echo "Country-based IP blocking tool (high-performance ipset version)"
+    
+    # Show current action configuration prominently
+    local config_file="/etc/ipdroper/action_config.conf"
+    local current_action="DROP (default)"
+    if [ -f "$config_file" ]; then
+        local config_action=$(cat "$config_file" 2>/dev/null | grep "^ACTION=" | cut -d'=' -f2)
+        if [ -n "$config_action" ]; then
+            current_action="$config_action"
+        fi
+    fi
+    echo "Current action: $current_action"
     echo ""
     
     show_current_status
@@ -132,6 +143,7 @@ show_menu() {
     echo "  - For first-time use, start with option 1"
     echo "  - Check current status with option 3"
     echo "  - Remove blocks with option 2"
+    echo "  - Change action type (DROP/REJECT) with option 4"
     echo ""
 }
 

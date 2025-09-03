@@ -198,6 +198,7 @@ main() {
     echo "Tips:"
     echo "  - Block new country: sudo ./scripts/ipsetConfiguration.sh"
     echo "  - Remove block: sudo ./scripts/ipsetRemove.sh"
+    echo "  - Change action type: sudo ./scripts/ipsetActionSelect.sh"
     echo "  - Run this tool again: sudo ./scripts/ipsetList.sh"
 }
 
