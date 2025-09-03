@@ -24,7 +24,7 @@ validate_country_code() {
                        "YT" "ZA" "ZM" "ZW")
     
     if [[ ! " ${valid_codes[@]} " =~ " ${COUNTRY} " ]]; then
-        echo "❌ Invalid country code: ${COUNTRY}"
+        echo "ERROR: Invalid country code: ${COUNTRY}"
         echo "Please enter a valid ISO 3166-1 alpha-2 country code."
         exit 1
     fi
@@ -33,7 +33,7 @@ validate_country_code() {
 # Function to check if ipset is available
 check_ipset() {
     if ! command -v ipset &> /dev/null; then
-        echo "❌ ipset is not installed."
+        echo "ERROR: ipset is not installed."
         echo "Installation instructions:"
         echo "  Ubuntu/Debian: sudo apt-get install ipset"
         echo "  CentOS/RHEL: sudo yum install ipset"
@@ -46,47 +46,47 @@ remove_country_ipset() {
     local country=$1
     local set_name="DROP-${country}"
     
-    echo "🗑️ Removing IP block for ${country}..."
+    echo "Removing IP block for ${country}..."
     
     # Check if ipset exists
     if ! ipset list -name | grep -q "^${set_name}$"; then
-        echo "ℹ️ ipset ${set_name} does not exist"
+        echo "ipset ${set_name} does not exist"
         return 0
     fi
     
     # Remove iptables rule if it exists
     if iptables -C INPUT -m set --match-set "${set_name}" src -j DROP 2>/dev/null; then
-        echo "🔓 Removing iptables rule..."
+        echo "Removing iptables rule..."
         iptables -D INPUT -m set --match-set "${set_name}" src -j DROP
-        echo "✅ iptables rule removed successfully"
+        echo "iptables rule removed successfully"
     else
-        echo "ℹ️ iptables rule does not exist"
+        echo "iptables rule does not exist"
     fi
     
     # Show ipset contents before removal
-    echo "📊 ipset contents before removal:"
+    echo "ipset contents before removal:"
     ipset list "${set_name}" | head -10
     echo "..."
     
     # Get ipset statistics
     local entry_count=$(ipset list "${set_name}" | grep -c "^[0-9]")
-    echo "📈 Entry count: ${entry_count}"
+    echo "Entry count: ${entry_count}"
     
     # Remove ipset
-    echo "🗑️ Removing ipset: ${set_name}"
+    echo "Removing ipset: ${set_name}"
     ipset destroy "${set_name}"
     
     if [ $? -eq 0 ]; then
-        echo "✅ ipset ${set_name} removed successfully"
+        echo "ipset ${set_name} removed successfully"
     else
-        echo "❌ Failed to remove ipset"
+        echo "Failed to remove ipset"
         exit 1
     fi
 }
 
 # Function to list all available ipsets
 list_available_ipsets() {
-    echo "📋 Available ipset list:"
+    echo "Available ipset list:"
     echo "================================"
     
     local ipset_count=0
@@ -98,7 +98,7 @@ list_available_ipsets() {
     done
     
     if [ $ipset_count -eq 0 ]; then
-        echo "  ℹ️ No countries are blocked"
+        echo "  No countries are blocked"
     fi
     
     echo ""
@@ -106,7 +106,7 @@ list_available_ipsets() {
 
 # Main execution
 main() {
-    echo "🗑️ IPDroper - ipset removal tool"
+    echo "IPDroper - ipset removal tool"
     echo "================================"
     
     # Check prerequisites
@@ -123,14 +123,14 @@ main() {
     validate_country_code
     
     echo ""
-    echo "🔍 Removal confirmation:"
+    echo "Removal confirmation:"
     echo "  Country: ${COUNTRY}"
     echo "  ipset: DROP-${COUNTRY}"
     echo ""
     
     read -p "Are you sure you want to remove the block for ${COUNTRY}? (y/N): " confirm
     if [[ "$confirm" != "y" && "$confirm" != "Y" ]]; then
-        echo "❌ Operation cancelled"
+        echo "Operation cancelled"
         exit 0
     fi
     
@@ -138,12 +138,12 @@ main() {
     remove_country_ipset "$COUNTRY"
     
     echo ""
-    echo "🎉 Block removal for ${COUNTRY} completed successfully!"
-    echo "📊 Current iptables rules:"
-    iptables -L INPUT -n --line-numbers | grep -E "(DROP|${COUNTRY})" || echo "  ℹ️ No related rules found"
+    echo "Block removal for ${COUNTRY} completed successfully!"
+    echo "Current iptables rules:"
+    iptables -L INPUT -n --line-numbers | grep -E "(DROP|${COUNTRY})" || echo "  No related rules found"
     
     echo ""
-    echo "💡 Tips:"
+    echo "Tips:"
     echo "  - Block new country: sudo ./scripts/ipsetConfiguration.sh"
     echo "  - Check status: sudo ./scripts/ipsetList.sh"
 }

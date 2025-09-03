@@ -6,7 +6,7 @@
 # Function to check if ipset is available
 check_ipset() {
     if ! command -v ipset &> /dev/null; then
-        echo "❌ ipset is not installed."
+        echo "ERROR: ipset is not installed."
         echo "Installation instructions:"
         echo "  Ubuntu/Debian: sudo apt-get install ipset"
         echo "  CentOS/RHEL: sudo yum install ipset"
@@ -16,7 +16,7 @@ check_ipset() {
 
 # Function to display ipset statistics
 display_ipset_stats() {
-    echo "📊 ipset statistics"
+    echo "ipset statistics"
     echo "================================"
     
     local total_entries=0
@@ -27,7 +27,7 @@ display_ipset_stats() {
         local entry_count=$(ipset list "$set_name" 2>/dev/null | grep -c "^[0-9]" || echo "0")
         local memory_usage=$(ipset list "$set_name" 2>/dev/null | grep "Size in memory" | awk '{print $4}' || echo "N/A")
         
-        echo "  🌍 ${country_code}:"
+        echo "  ${country_code}:"
         echo "    ipset: ${set_name}"
         echo "    Entry count: ${entry_count}"
         echo "    Memory usage: ${memory_usage}"
@@ -38,9 +38,9 @@ display_ipset_stats() {
     done
     
     if [ $total_ipsets -eq 0 ]; then
-        echo "  ℹ️ No countries are blocked"
+        echo "  No countries are blocked"
     else
-        echo "📈 Summary:"
+        echo "Summary:"
         echo "  Blocked countries: ${total_ipsets}"
         echo "  Total entries: ${total_entries}"
     fi
@@ -50,25 +50,25 @@ display_ipset_stats() {
 
 # Function to display iptables rules
 display_iptables_rules() {
-    echo "🔒 iptables rules"
+    echo "iptables rules"
     echo "================================"
     
     # Show INPUT chain rules related to ipset
     echo "INPUT chain (ipset related):"
-    iptables -L INPUT -n --line-numbers | grep -E "(DROP|ipset)" || echo "  ℹ️ No ipset-related rules found"
+    iptables -L INPUT -n --line-numbers | grep -E "(DROP|ipset)" || echo "  No ipset-related rules found"
     
     echo ""
     
     # Show all chains
     echo "All chains:"
-    iptables -L -n --line-numbers | grep -E "^Chain|DROP-" || echo "  ℹ️ No chains found"
+    iptables -L -n --line-numbers | grep -E "^Chain|DROP-" || echo "  No chains found"
     
     echo ""
 }
 
 # Function to display system information
 display_system_info() {
-    echo "💻 System information"
+    echo "System information"
     echo "================================"
     
     # Kernel version
@@ -84,7 +84,7 @@ display_system_info() {
     
     # Loaded ipset modules
     echo "Loaded ipset modules:"
-    lsmod | grep "ip_set" || echo "  ℹ️ No ipset modules loaded"
+    lsmod | grep "ip_set" || echo "  No ipset modules loaded"
     
     echo ""
 }
@@ -99,16 +99,16 @@ display_detailed_ipset() {
     fi
     
     if [ -z "$set_name" ]; then
-        echo "❌ No ipset name specified"
+        echo "ERROR: No ipset name specified"
         return 1
     fi
     
     if ! ipset list -name | grep -q "^${set_name}$"; then
-        echo "❌ ipset ${set_name} does not exist"
+        echo "ERROR: ipset ${set_name} does not exist"
         return 1
     fi
     
-    echo "🔍 Detailed information for ${set_name}"
+    echo "Detailed information for ${set_name}"
     echo "================================"
     
     # Show full ipset contents
@@ -118,17 +118,17 @@ display_detailed_ipset() {
     
     # Show iptables rules using this ipset
     echo "iptables rules using this ipset:"
-    iptables -L -n | grep -E "${set_name}" || echo "  ℹ️ No related rules found"
+    iptables -L -n | grep -E "${set_name}" || echo "  No related rules found"
 }
 
 # Function to show performance metrics
 display_performance_metrics() {
-    echo "⚡ Performance metrics"
+    echo "Performance metrics"
     echo "================================"
     
     # Show iptables statistics
     echo "iptables statistics:"
-    iptables -L INPUT -v -n | grep -E "(DROP|ipset)" || echo "  ℹ️ No statistics available"
+    iptables -L INPUT -v -n | grep -E "(DROP|ipset)" || echo "  No statistics available"
     
     echo ""
     
@@ -145,7 +145,7 @@ display_performance_metrics() {
 
 # Main execution
 main() {
-    echo "📋 IPDroper - ipset status display tool"
+    echo "IPDroper - ipset status display tool"
     echo "================================"
     
     # Check prerequisites
@@ -189,13 +189,13 @@ main() {
             display_performance_metrics
             ;;
         *)
-            echo "❌ Invalid selection"
+            echo "ERROR: Invalid selection"
             exit 1
             ;;
     esac
     
     echo ""
-    echo "💡 Tips:"
+    echo "Tips:"
     echo "  - Block new country: sudo ./scripts/ipsetConfiguration.sh"
     echo "  - Remove block: sudo ./scripts/ipsetRemove.sh"
     echo "  - Run this tool again: sudo ./scripts/ipsetList.sh"

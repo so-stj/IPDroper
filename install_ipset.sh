@@ -33,7 +33,7 @@ detect_distro() {
 
 # Function to install ipset on Ubuntu/Debian
 install_ipset_debian() {
-    print_status $BLUE "📦 Detected Debian/Ubuntu-based distribution"
+    print_status $BLUE "Detected Debian/Ubuntu-based distribution"
     
     # Update package list
     print_status $YELLOW "Updating package list..."
@@ -58,7 +58,7 @@ install_ipset_debian() {
 
 # Function to install ipset on CentOS/RHEL
 install_ipset_rhel() {
-    print_status $BLUE "📦 Detected CentOS/RHEL-based distribution"
+    print_status $BLUE "Detected CentOS/RHEL-based distribution"
     
     # Install ipset
     print_status $YELLOW "Installing ipset..."
@@ -79,7 +79,7 @@ install_ipset_rhel() {
 
 # Function to install ipset on Arch Linux
 install_ipset_arch() {
-    print_status $BLUE "📦 Detected Arch Linux-based distribution"
+    print_status $BLUE "Detected Arch Linux-based distribution"
     
     # Install ipset
     print_status $YELLOW "Installing ipset..."
@@ -100,14 +100,14 @@ install_ipset_arch() {
 
 # Function to check kernel support
 check_kernel_support() {
-    print_status $BLUE "🔍 Checking kernel ipset support..."
+    print_status $BLUE "Checking kernel ipset support..."
     
     # Check if ipset modules are available
     if [ -d "/lib/modules/$(uname -r)/kernel/net/netfilter/ipset" ]; then
-        print_status $GREEN "✅ Kernel supports ipset"
+        print_status $GREEN "Kernel supports ipset"
         return 0
     else
-        print_status $RED "❌ Kernel does not support ipset"
+        print_status $RED "Kernel does not support ipset"
         print_status $YELLOW "Kernel recompilation or update may be required"
         return 1
     fi
@@ -115,21 +115,21 @@ check_kernel_support() {
 
 # Function to load ipset modules
 load_ipset_modules() {
-    print_status $BLUE "📥 Loading ipset kernel modules..."
+    print_status $BLUE "Loading ipset kernel modules..."
     
     # Load ipset module
     if modprobe ip_set; then
-        print_status $GREEN "✅ ip_set module loaded successfully"
+        print_status $GREEN "ip_set module loaded successfully"
     else
-        print_status $RED "❌ Failed to load ip_set module"
+        print_status $RED "Failed to load ip_set module"
         return 1
     fi
     
     # Load hash:net module
     if modprobe ip_set_hash_net; then
-        print_status $GREEN "✅ ip_set_hash_net module loaded successfully"
+        print_status $GREEN "ip_set_hash_net module loaded successfully"
     else
-        print_status $RED "❌ Failed to load ip_set_hash_net module"
+        print_status $RED "Failed to load ip_set_hash_net module"
         return 1
     fi
     
@@ -138,7 +138,7 @@ load_ipset_modules() {
 
 # Function to configure persistent module loading
 configure_persistent_modules() {
-    print_status $BLUE "🔧 Configuring persistent module loading..."
+    print_status $BLUE "Configuring persistent module loading..."
     
     local distro=$(detect_distro)
     local modules_file=""
@@ -154,7 +154,7 @@ configure_persistent_modules() {
             modules_file="/etc/modules-load.d/ipset.conf"
             ;;
         *)
-            print_status $YELLOW "⚠️ Manual configuration required for this distribution"
+            print_status $YELLOW "Manual configuration required for this distribution"
             return 0
             ;;
     esac
@@ -167,89 +167,89 @@ configure_persistent_modules() {
     # Check if modules are already added
     if ! grep -q "ip_set" "$modules_file"; then
         echo "ip_set" >> "$modules_file"
-        print_status $GREEN "✅ Added ip_set to $modules_file"
+        print_status $GREEN "Added ip_set to $modules_file"
     fi
     
     if ! grep -q "ip_set_hash_net" "$modules_file"; then
         echo "ip_set_hash_net" >> "$modules_file"
-        print_status $GREEN "✅ Added ip_set_hash_net to $modules_file"
+        print_status $GREEN "Added ip_set_hash_net to $modules_file"
     fi
     
-    print_status $GREEN "✅ Persistent module loading configured"
+    print_status $GREEN "Persistent module loading configured"
 }
 
 # Function to test ipset functionality
 test_ipset() {
-    print_status $BLUE "🧪 Testing ipset functionality..."
+    print_status $BLUE "Testing ipset functionality..."
     
     # Create test ipset
     if ipset create test_set hash:net family inet hashsize 1024 maxelem 65536 2>/dev/null; then
-        print_status $GREEN "✅ Successfully created test ipset"
+        print_status $GREEN "Successfully created test ipset"
         
         # Add test entry
         if ipset add test_set 192.168.1.0/24 2>/dev/null; then
-            print_status $GREEN "✅ Successfully added test entry"
+            print_status $GREEN "Successfully added test entry"
             
             # List test ipset
             if ipset list test_set >/dev/null 2>&1; then
-                print_status $GREEN "✅ Successfully listed ipset"
+                print_status $GREEN "Successfully listed ipset"
                 
                 # Remove test ipset
                 if ipset destroy test_set 2>/dev/null; then
-                    print_status $GREEN "✅ Successfully removed test ipset"
+                    print_status $GREEN "Successfully removed test ipset"
                     return 0
                 else
-                    print_status $RED "❌ Failed to remove test ipset"
+                    print_status $RED "Failed to remove test ipset"
                     return 1
                 fi
             else
-                print_status $RED "❌ Failed to list ipset"
+                print_status $RED "Failed to list ipset"
                 return 1
             fi
         else
-            print_status $RED "❌ Failed to add test entry"
+            print_status $RED "Failed to add test entry"
             ipset destroy test_set 2>/dev/null
             return 1
         fi
     else
-        print_status $RED "❌ Failed to create test ipset"
+        print_status $RED "Failed to create test ipset"
         return 1
     fi
 }
 
 # Function to show installation summary
 show_summary() {
-    print_status $GREEN "🎉 ipset installation completed successfully!"
+    print_status $GREEN "ipset installation completed successfully!"
     echo ""
-    echo "📋 Installed packages:"
-    echo "  ✅ ipset: $(ipset --version 2>/dev/null | head -1 || echo 'N/A')"
-    echo "  ✅ iptables: $(iptables --version 2>/dev/null | head -1 || echo 'N/A')"
-    echo "  ✅ curl: $(curl --version 2>/dev/null | head -1 || echo 'N/A')"
+    echo "Installed packages:"
+    echo "  ipset: $(ipset --version 2>/dev/null | head -1 || echo 'N/A')"
+    echo "  iptables: $(iptables --version 2>/dev/null | head -1 || echo 'N/A')"
+    echo "  curl: $(curl --version 2>/dev/null | head -1 || echo 'N/A')"
     echo ""
-    echo "🔧 Configured items:"
-    echo "  ✅ Kernel module loading"
-    echo "  ✅ Persistent module loading configuration"
-    echo "  ✅ ipset functionality test"
+    echo "Configured items:"
+    echo "  Kernel module loading"
+    echo "  Persistent module loading configuration"
+    echo "  ipset functionality test"
     echo ""
-    echo "🚀 Next steps:"
+    echo "Next steps:"
     echo "  1. Run sudo ./setup_ipset.sh to start IPDroper"
     echo "  2. For first-time use, start with option 1"
     echo ""
-    echo "💡 Help:"
+    echo "Help:"
     echo "  ./setup_ipset.sh --help for detailed help"
     echo ""
 }
 
 # Main execution
 main() {
-    print_status $BLUE "🚀 IPDroper - ipset installer"
+    print_status $BLUE "IPDroper - ipset installer"
     echo "=========================================="
     echo "Installing ipset for country-based IP blocking tool"
     echo ""
     
     # Check if running as root
     if [ "$EUID" -ne 0 ]; then
-        print_status $RED "❌ This script requires root privileges"
+        print_status $RED "This script requires root privileges"
         echo "Please use: sudo ./install_ipset.sh"
         exit 1
     fi
@@ -267,7 +267,7 @@ main() {
             install_ipset_arch
             ;;
         *)
-            print_status $RED "❌ Unsupported distribution: $distro"
+            print_status $RED "Unsupported distribution: $distro"
             echo "Please manually install ipset, iptables, and curl"
             exit 1
             ;;
@@ -288,7 +288,7 @@ main() {
     
     # Test ipset functionality
     if ! test_ipset; then
-        print_status $RED "❌ ipset functionality test failed"
+        print_status $RED "ipset functionality test failed"
         exit 1
     fi
     

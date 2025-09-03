@@ -24,7 +24,7 @@ validate_country_code() {
                        "YT" "ZA" "ZM" "ZW")
     
     if [[ ! " ${valid_codes[@]} " =~ " ${COUNTRY} " ]]; then
-        echo "❌ Invalid country code: ${COUNTRY}"
+        echo "ERROR: Invalid country code: ${COUNTRY}"
         echo "Please enter a valid ISO 3166-1 alpha-2 country code."
         exit 1
     fi
@@ -61,7 +61,7 @@ calculate_cidr() {
 # Function to check if ipset is available
 check_ipset() {
     if ! command -v ipset &> /dev/null; then
-        echo "❌ ipset is not installed."
+        echo "ERROR: ipset is not installed."
         echo "Installation instructions:"
         echo "  Ubuntu/Debian: sudo apt-get install ipset"
         echo "  CentOS/RHEL: sudo yum install ipset"
@@ -70,7 +70,7 @@ check_ipset() {
     
     # Check if ipset module is loaded
     if ! lsmod | grep -q "ip_set"; then
-        echo "📥 Loading ipset kernel modules..."
+        echo "Loading ipset kernel modules..."
         modprobe ip_set
         modprobe ip_set_hash_net
     fi
@@ -82,27 +82,27 @@ create_country_ipset() {
     local url=$2
     local set_name="DROP-${country}"
     
-    echo "🌍 Blocking IP ranges for ${country}..."
-    echo "📥 Downloading RIR data from: ${url}"
+    echo "Blocking IP ranges for ${country}..."
+    echo "Downloading RIR data from: ${url}"
     
     # Download RIR data
     if ! curl -s "${url}" > /tmp/delegated-latest; then
-        echo "❌ Failed to download RIR data from: ${url}"
+        echo "ERROR: Failed to download RIR data from: ${url}"
         exit 1
     fi
     
     # Remove existing ipset if it exists
     if ipset list -name | grep -q "^${set_name}$"; then
-        echo "🗑️ Removing existing ipset: ${set_name}"
+        echo "Removing existing ipset: ${set_name}"
         ipset destroy "${set_name}"
     fi
     
     # Create new ipset
-    echo "🆕 Creating ipset: ${set_name}"
+    echo "Creating ipset: ${set_name}"
     ipset create "${set_name}" hash:net family inet hashsize 1024 maxelem 65536
     
     # Process IP ranges
-    echo "⚡ Processing IP ranges..."
+    echo "Processing IP ranges..."
     local count=0
     local valid_ranges=0
     
@@ -113,7 +113,7 @@ create_country_ipset() {
                 ipset add "${set_name}" "$cidr" 2>/dev/null
                 if [ $? -eq 0 ]; then
                     valid_ranges=$((valid_ranges + 1))
-                    echo -n "✅ $cidr "
+                    echo -n "OK $cidr "
                 fi
                 count=$((count + 1))
                 
@@ -126,29 +126,29 @@ create_country_ipset() {
     done < /tmp/delegated-latest
     
     echo ""
-    echo "📊 Processing complete: ${valid_ranges} valid IP ranges added to ${set_name}"
+    echo "Processing complete: ${valid_ranges} valid IP ranges added to ${set_name}"
     
     # Clean up temporary file
     rm -f /tmp/delegated-latest
     
     # Show ipset statistics
-    echo "📈 ipset statistics:"
+    echo "ipset statistics:"
     ipset list "${set_name}" | head -20
     echo "..."
     
     # Create iptables rule if it doesn't exist
     if ! iptables -C INPUT -m set --match-set "${set_name}" src -j DROP 2>/dev/null; then
-        echo "🔒 Creating iptables rule..."
+        echo "Creating iptables rule..."
         iptables -A INPUT -m set --match-set "${set_name}" src -j DROP
-        echo "✅ iptables rule created successfully"
+        echo "iptables rule created successfully"
     else
-        echo "ℹ️ iptables rule already exists"
+        echo "iptables rule already exists"
     fi
 }
 
 # Main execution
 main() {
-    echo "🚀 IPDroper - ipset version"
+    echo "IPDroper - ipset version"
     echo "================================"
     
     # Check prerequisites
@@ -170,7 +170,7 @@ main() {
         3) url="https://ftp.arin.net/pub/stats/arin/delegated-arin-extended-latest" ;;
         4) url="https://ftp.lacnic.net/pub/stats/ripencc/delegated-ripencc-latest" ;;
         5) url="https://ftp.afrinic.net/pub/stats/afrinic/delegated-afrinic-latest" ;;
-        *) echo "❌ Invalid selection"; exit 1 ;;
+        *) echo "ERROR: Invalid selection"; exit 1 ;;
     esac
     
     read -p "Enter country code (e.g., CN, RU, JP): " COUNTRY
@@ -180,14 +180,14 @@ main() {
     validate_country_code
     
     echo ""
-    echo "🔍 Configuration confirmation:"
+    echo "Configuration confirmation:"
     echo "  Country: ${COUNTRY}"
     echo "  RIR: $url"
     echo ""
     
     read -p "Continue? (y/N): " confirm
     if [[ "$confirm" != "y" && "$confirm" != "Y" ]]; then
-        echo "❌ Operation cancelled"
+        echo "Operation cancelled"
         exit 0
     fi
     
@@ -195,12 +195,12 @@ main() {
     create_country_ipset "$COUNTRY" "$url"
     
     echo ""
-    echo "🎉 Blocking of ${COUNTRY} completed successfully!"
-    echo "📊 Current iptables rules:"
+    echo "Blocking of ${COUNTRY} completed successfully!"
+    echo "Current iptables rules:"
     iptables -L INPUT -n --line-numbers | grep -E "(DROP|${COUNTRY})"
     
     echo ""
-    echo "💡 Tips:"
+    echo "Tips:"
     echo "  - Remove block: sudo ./scripts/ipsetRemove.sh"
     echo "  - Check status: sudo ./scripts/ipsetList.sh"
 }
