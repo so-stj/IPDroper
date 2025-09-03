@@ -68,7 +68,7 @@ The tool supports all major RIRs:
 
 ## Prerequisites
 
-### Traditional Version
+### iptable Version
 - Linux operating system
 - Bash shell
 - `iptables` installed and configured
@@ -85,7 +85,7 @@ The tool supports all major RIRs:
 
 ## Installation
 
-### Traditional Version
+### iptable Version
 
 1. **Clone the repository:**
    ```bash
@@ -130,7 +130,7 @@ The tool supports all major RIRs:
 
 ## Usage
 
-### Traditional Version
+### iptable Version
 
 1. **Run the main setup script:**
    ```bash
@@ -188,7 +188,7 @@ sudo ./setup_ipset.sh
 
 ## Scripts Overview
 
-### Traditional Version
+### iptable Version
 - **`setup.sh`** - Main menu script for traditional iptables operations
 - **`scripts/iptablesConfiguration.sh`** - Add country blocks with direct iptables rules
 - **`scripts/iptablesRemove.sh`** - Remove country blocks
