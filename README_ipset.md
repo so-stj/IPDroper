@@ -109,6 +109,7 @@ sudo ./setup_ipset.sh
    - **1** - Block country (ipset version)
    - **2** - Remove block (ipset version)
    - **3** - Show current status (ipset version)
+   - **4** - Select action type (DROP/REJECT)
 
 ### Blocking a Country
 
@@ -123,6 +124,34 @@ sudo ./setup_ipset.sh
 sudo ./scripts/ipsetConfiguration.sh
 # Select: 1 (APNIC)
 # Enter country code: CN
+```
+
+### Action Selection
+
+IPDroper ipset version allows you to choose between two actions for blocked IP addresses:
+
+- **DROP Action** (default):
+  - Silently drops packets without any response
+  - More stealthy, no feedback to sender
+  - Recommended for security purposes
+  - Packets appear to be lost to the sender
+
+- **REJECT Action**:
+  - Rejects packets with ICMP error message
+  - Sender receives immediate feedback
+  - Useful for debugging and testing
+  - Sender knows the connection was actively rejected
+
+**To change the action:**
+```bash
+sudo ./setup_ipset.sh
+# Select option 4
+# Choose between DROP and REJECT
+```
+
+**Direct action selection:**
+```bash
+sudo ./scripts/ipsetActionSelect.sh
 ```
 
 ### Unblocking a Country
@@ -152,15 +181,24 @@ Main menu script that provides an interactive interface to access all IPDroper i
 - Calculates CIDR notation for IP ranges
 - Creates ipset and iptables rules for blocking
 - Supports all major RIRs (APNIC, RIPE-NCC, ARIN, LACNIC, AFRINIC)
+- Automatically applies selected action (DROP/REJECT) from configuration
 
 ### `scripts/ipsetRemove.sh`
 - Validates country codes using ISO 3166-1 alpha-2 standard
 - Removes all ipset and iptables rules for specified country
 - Performs cleanup operations
+- Handles both DROP and REJECT action types
 
 ### `scripts/ipsetList.sh`
 - Displays current ipset and iptables rules with verbose output
 - Shows performance metrics and statistics
+- Displays current action configuration (DROP/REJECT)
+
+### `scripts/ipsetActionSelect.sh`
+- Allows users to select between DROP and REJECT actions
+- Updates existing iptables rules to use selected action
+- Saves configuration to `/etc/ipdroper/action_config.conf`
+- Provides detailed explanation of each action type
 
 ## Directory Structure
 
@@ -176,6 +214,7 @@ IPDroper/
     ├── ipsetConfiguration.sh    # ipset version country block add
     ├── ipsetRemove.sh           # ipset version country block remove
     ├── ipsetList.sh             # ipset version status display
+    ├── ipsetActionSelect.sh     # ipset version action selection (DROP/REJECT)
     ├── iptablesConfiguration.sh # Traditional version country block add
     ├── iptablesRemove.sh        # Traditional version country block remove
     └── iptablesList.sh          # Traditional version status display
@@ -196,6 +235,10 @@ IPDroper/
 **Lookup performance:**
 - **Traditional version**: Linear search (O(n))
 - **ipset version**: Hash search (O(1))
+
+**Action flexibility:**
+- **Traditional version**: Fixed DROP action only
+- **ipset version**: Configurable DROP or REJECT actions with easy switching
 
 ## Troubleshooting
 

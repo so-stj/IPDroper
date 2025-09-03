@@ -51,16 +51,17 @@ IPDroper ipset版は、Linuxシステムでipsetを使用して国別にIPアド
 - **LACNIC** (Latin America and Caribbean Network Information Centre)
 - **AFRINIC** (African Network Information Centre)
 
-## 主な特徴
+## 主要機能
 
-- **国別IPブロック** - ISO 3166-1 alpha-2国コードを使用して国全体をブロック
-- **高性能ipset** - ハッシュテーブルベースで高速なIPルックアップ
-- **マルチRIRサポート** - 主要な地域インターネットレジストリすべてに対応
-- **簡単な管理** - すべての操作のためのシンプルなメニュー駆動インターフェース
-- **リアルタイム監視** - 現在のipsetとiptablesルールと統計を表示
-- **柔軟な削除** - 不要になった国ブロックを簡単に削除
-- **自動CIDR計算** - IP範囲をCIDR表記に自動変換
-- **検証機能** - 国コードを検証し、適切なipset管理を保証
+- **国別IPブロック** - ISO 3166-1 alpha-2国コードを使用した国全体のブロック
+- **高性能ipset** - ハッシュテーブルベースの高速IP検索
+- **マルチRIRサポート** - すべての主要地域インターネットレジストリに対応
+- **柔軟なアクション選択** - DROP（ステルス）とREJECT（フィードバック付き）アクションの選択
+- **簡単管理** - シンプルなメニュー駆動インターフェース
+- **リアルタイム監視** - 現在のipsetとiptablesルール・統計の表示
+- **柔軟な削除** - 不要になった国ブロックの簡単削除
+- **自動CIDR計算** - IP範囲をCIDR記法に自動変換
+- **検証機能** - 国コードの検証と適切なipset管理の保証
 - **メモリ効率** - 従来版と比較して50-80%のメモリ削減
 
 ## 前提条件
@@ -109,6 +110,7 @@ sudo ./setup_ipset.sh
    - **1** - 国をブロック (ipset版)
    - **2** - ブロックを削除 (ipset版)
    - **3** - 現在の状態を表示 (ipset版)
+   - **4** - アクション種別選択 (DROP/REJECT)
 
 ### 国のブロック
 
@@ -123,6 +125,34 @@ sudo ./setup_ipset.sh
 sudo ./scripts/ipsetConfiguration.sh
 # 選択: 1 (APNIC)
 # 国コードを入力: CN
+```
+
+### アクション選択
+
+IPDroper ipset版では、ブロックされたIPアドレスに対する2つのアクションから選択できます：
+
+- **DROPアクション**（デフォルト）:
+  - パケットを応答なしで静かに破棄
+  - よりステルス性が高く、送信者にフィードバックなし
+  - セキュリティ目的に推奨
+  - 送信者にはパケットが失われたように見える
+
+- **REJECTアクション**:
+  - ICMPエラーメッセージでパケットを拒否
+  - 送信者に即座のフィードバック
+  - デバッグとテストに有用
+  - 送信者は接続が積極的に拒否されたことを知る
+
+**アクションを変更するには:**
+```bash
+sudo ./setup_ipset.sh
+# オプション4を選択
+# DROPとREJECTから選択
+```
+
+**直接アクション選択:**
+```bash
+sudo ./scripts/ipsetActionSelect.sh
 ```
 
 ### 国のブロック解除
@@ -152,15 +182,24 @@ sudo ./scripts/ipsetConfiguration.sh
 - IP範囲のCIDR表記を計算
 - ブロック用のipsetとiptablesルールを作成
 - 主要なRIRすべてをサポート（APNIC、RIPE-NCC、ARIN、LACNIC、AFRINIC）
+- 設定から選択されたアクション（DROP/REJECT）を自動適用
 
 ### `scripts/ipsetRemove.sh`
 - ISO 3166-1 alpha-2標準を使用して国コードを検証
 - 指定された国のすべてのipsetとiptablesルールを削除
 - クリーンアップ処理
+- DROPとREJECTの両方のアクション種別に対応
 
 ### `scripts/ipsetList.sh`
 - 詳細な出力で現在のipsetとiptablesルールを表示
 - パフォーマンス指標と統計を表示
+- 現在のアクション設定（DROP/REJECT）を表示
+
+### `scripts/ipsetActionSelect.sh`
+- ユーザーがDROPとREJECTアクションから選択可能
+- 既存のiptablesルールを選択されたアクションに更新
+- 設定を`/etc/ipdroper/action_config.conf`に保存
+- 各アクション種別の詳細説明を提供
 
 ## ディレクトリ構造
 
@@ -176,6 +215,7 @@ IPDroper/
     ├── ipsetConfiguration.sh    # ipset版国ブロック追加
     ├── ipsetRemove.sh           # ipset版国ブロック削除
     ├── ipsetList.sh             # ipset版状態表示
+    ├── ipsetActionSelect.sh     # ipset版アクション選択（DROP/REJECT）
     ├── iptablesConfiguration.sh # 従来版国ブロック追加
     ├── iptablesRemove.sh        # 従来版国ブロック削除
     └── iptablesList.sh          # 従来版状態表示
@@ -196,6 +236,10 @@ IPDroper/
 **ルックアップ性能:**
 - **従来版**: 線形検索（O(n)）
 - **ipset版**: ハッシュ検索（O(1)）
+
+**アクションの柔軟性:**
+- **従来版**: DROPアクションのみ固定
+- **ipset版**: DROPまたはREJECTアクションの設定可能で簡単切り替え
 
 ## トラブルシューティング
 
