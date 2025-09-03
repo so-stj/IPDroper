@@ -26,7 +26,6 @@ For Japanese README is [here](https://github.com/so-stj/IPDroper/blob/main/READM
 - [Scripts Overview](#scripts-overview)
 - [Directory Structure](#directory-structure)
 - [Troubleshooting](#troubleshooting)
-- [Contributing](#contributing)
 - [License](#license)
 
 ## Description
